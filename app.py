@@ -6,5 +6,3 @@ application = app # our hosting requires application in passenger_wsgi
 def hello():
     return "This is Hello World!\n"
  
-if __name__ == "__main__":
-    app.run()
