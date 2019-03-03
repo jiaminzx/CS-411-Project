@@ -23,6 +23,9 @@ def main():
 @app.route("/main")
 def m():
     return render_template('index.html')
+@app.route("/showUsers")
+def showUsers():
+    return render_template('showUser.html')
 
 @app.route('/showSignUp')
 def signUp():
@@ -56,6 +59,8 @@ def signUp():
     #     cursor.close() 
     #     conn.close()
 
-###remove below if wsgi
+
+
+###remove below if hosting on cpanel
 # if __name__ == "__main__":
 #     app.run(debug=True)
