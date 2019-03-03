@@ -11,7 +11,6 @@ def m():
     return render_template('index.html')
 
 @app.route("/showSignUp")
-    
 def showSignUp():  
     return render_template('index2.html')
 
