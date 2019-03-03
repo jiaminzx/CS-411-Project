@@ -25,8 +25,6 @@ def main():
 def m():
     return render_template('index.html')
 
-
-
 @app.route('/showSignUp')
 def signUp():
     return render_template('index2.html')
@@ -60,5 +58,5 @@ def signUp():
     #     conn.close()
 
 ###remove below if wsgi
-if __name__ == "__main__":
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     app.run(debug=True)
