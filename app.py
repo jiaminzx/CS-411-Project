@@ -9,10 +9,10 @@ application = app # our hosting requires application in passenger_wsgi
 mysql = MySQL()
  
 # MySQL configurations
-app.config['MYSQL_DATABASE_USER'] = 'jay'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'jay'
+app.config['MYSQL_DATABASE_USER'] = 'pickles411_admin'
+app.config['MYSQL_DATABASE_PASSWORD'] = '411admin411'
 app.config['MYSQL_DATABASE_DB'] = 'pickles249_test'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_HOST'] = ''
 mysql.init_app(app)
 conn = mysql.connect()
 cursor = conn.cursor()	
