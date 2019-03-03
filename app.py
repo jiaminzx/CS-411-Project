@@ -6,16 +6,16 @@ app = Flask(__name__)
 application = app # our hosting requires application in passenger_wsgi
 
 
-mysql = MySQL()
+# mysql = MySQL()
  
-# MySQL configurations
-app.config['MYSQL_DATABASE_USER'] = 'pickles411_admin'
-app.config['MYSQL_DATABASE_PASSWORD'] = '411admin411'
-app.config['MYSQL_DATABASE_DB'] = 'pickles249_test'
-app.config['MYSQL_DATABASE_HOST'] = ''
-mysql.init_app(app)
-conn = mysql.connect()
-cursor = conn.cursor()	
+# # MySQL configurations
+# app.config['MYSQL_DATABASE_USER'] = 'pickles411_admin'
+# app.config['MYSQL_DATABASE_PASSWORD'] = '411admin411'
+# app.config['MYSQL_DATABASE_DB'] = 'pickles249_test'
+# app.config['MYSQL_DATABASE_HOST'] = 'pickles249.web.illinois.edu'
+# mysql.init_app(app)
+# conn = mysql.connect()
+# cursor = conn.cursor()	
 
 @app.route("/")
 def main():
@@ -29,34 +29,35 @@ def m():
 
 @app.route('/showSignUp',methods=['POST'])
 def signUp():
-    try:
-        _name = request.form['inputName']
-        _email = request.form['inputEmail']
-        _password = request.form['inputPassword']
+    return render_template('index2.html')
+    # try:
+    #     _name = request.form['inputName']
+    #     _email = request.form['inputEmail']
+    #     _password = request.form['inputPassword']
 
-        # validate the received values
-        if _name and _email and _password:
+    #     # validate the received values
+    #     if _name and _email and _password:
             
-            # All Good, let's call MySQL
+    #         # All Good, let's call MySQL
             
            
-            _hashed_password = generate_password_hash(_password)
-            cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
-            data = cursor.fetchall()
+    #         _hashed_password = generate_password_hash(_password)
+    #         cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
+    #         data = cursor.fetchall()
 
-            if len(data) is 0:
-                conn.commit()
-                return json.dumps({'message':'User created successfully !'})
-            else:
-                return json.dumps({'error':str(data[0])})
-        else:
-            return json.dumps({'html':'<span>Enter the required fields</span>'})
+    #         if len(data) is 0:
+    #             conn.commit()
+    #             return json.dumps({'message':'User created successfully !'})
+    #         else:
+    #             return json.dumps({'error':str(data[0])})
+    #     else:
+    #         return json.dumps({'html':'<span>Enter the required fields</span>'})
 
-    except Exception as e:
-        return json.dumps({'error':str(e)})
-    finally:
-        cursor.close() 
-        conn.close()
+    # except Exception as e:
+    #     return json.dumps({'error':str(e)})
+    # finally:
+    #     cursor.close() 
+    #     conn.close()
 
 ###remove below if wsgi
 if __name__ == "__main__":
