@@ -27,7 +27,7 @@ def m():
 
 
 
-@app.route('/showSignUp',methods=['POST'])
+@app.route('/showSignUp')
 def signUp():
     return render_template('index2.html')
     # try:
