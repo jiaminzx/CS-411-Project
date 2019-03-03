@@ -6,16 +6,16 @@ app = Flask(__name__)
 application = app # our hosting requires application in passenger_wsgi
 
 
-# mysql = MySQL()
- 
+
 # # MySQL configurations
 # app.config['MYSQL_DATABASE_USER'] = 'pickles411_admin'
 # app.config['MYSQL_DATABASE_PASSWORD'] = '411admin411'
 # app.config['MYSQL_DATABASE_DB'] = 'pickles249_test'
-# app.config['MYSQL_DATABASE_HOST'] = 'pickles249.web.illinois.edu'
-# mysql.init_app(app)
-# conn = mysql.connect()
-# cursor = conn.cursor()	
+# app.config['MYSQL_DATABASE_HOST'] = '_______________________________________'
+# mysql=MySQL(app)
+
+# curr = mysql.connect()
+# cursor = curr.cursor()	
 
 @app.route("/")
 def main():
@@ -27,7 +27,7 @@ def m():
 
 
 
-@app.route('/showSignUp')
+@app.route('/showSignUp', methods=['POST'])
 def signUp():
     return render_template('index2.html')
     # try:
