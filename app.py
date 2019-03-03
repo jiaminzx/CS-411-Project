@@ -60,5 +60,5 @@ def signUp():
     #     conn.close()
 
 ###remove below if wsgi
-if __name__ == "__main__":
-    app.run()
+# if __name__ == "__main__":
+#     app.run()
