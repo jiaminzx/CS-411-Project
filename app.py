@@ -1,5 +1,5 @@
 from flask import Flask, render_template, json, request
-from flaskext.mysql import MySQL
+#from flaskext.mysql import MySQL
 
 app = Flask(__name__)
 application = app # our hosting requires application in passenger_wsgi
