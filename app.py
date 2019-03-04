@@ -22,8 +22,8 @@ def showUsers():
     cursor = mariadb_connection.cursor()
     cursor.execute("SELECT name,email FROM users WHERE name=%s", ('john',))
     rows=cursor.fetchall()
-    
-    return render_emplate("showUser.html",rows=rows)
+    print( rows)
+    return render_template("showUser.html",rows=rows)
     mariadb_connection.close()
     
 

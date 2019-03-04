@@ -11,21 +11,16 @@
         
       </head>
    <body>
-      <table border = 1>
-         <thead>
-            <td>Name</td>
-            <td>email</td>
-        
-         </thead>
+      
          
          {% for row in rows %}
-            <tr>
-               <td>{{row["name"]}}</td>
-               <td>{{row["email"]}}</td>
+            
+               {{row["name]}}
+               {{row["email"]}}
                	
-            </tr>
+            
          {% endfor %}
-      </table>
+      
       
       <a href = "/">Go back to home page</a>
    </body>
