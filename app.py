@@ -1,5 +1,5 @@
 from flask import Flask, render_template, json, request
-from flask.ext.mysql import MySQL
+#from flask.ext.mysql import MySQL
 
 app = Flask(__name__)
 application = app # our hosting requires application in passenger_wsgi
@@ -7,14 +7,14 @@ application = app # our hosting requires application in passenger_wsgi
 
 
 # MySQL configurations
-app.config['MYSQL_DATABASE_USER'] = 'pickles411_admin'
-app.config['MYSQL_DATABASE_PASSWORD'] = '411admin411'
-app.config['MYSQL_DATABASE_DB'] = 'pickles249_test'
-app.config['MYSQL_DATABASE_HOST'] = '_______________________________________'
-mysql=MySQL(app)
+# app.config['MYSQL_DATABASE_USER'] = 'pickles411_admin'
+# app.config['MYSQL_DATABASE_PASSWORD'] = '411admin411'
+# app.config['MYSQL_DATABASE_DB'] = 'pickles249_test'
+# app.config['MYSQL_DATABASE_HOST'] = '_______________________________________'
+# mysql=MySQL(app)
 
-curr = mysql.connect()
-cursor = curr.cursor()	
+# curr = mysql.connect()
+# cursor = curr.cursor()	
 
 @app.route("/")
 def main():
