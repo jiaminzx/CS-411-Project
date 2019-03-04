@@ -1,20 +1,12 @@
 from flask import Flask, render_template, json, request
-#from flask.ext.mysql import MySQL
+#import MySQL
+import mysql.connector as mariadb
+
+
 
 app = Flask(__name__)
 application = app # our hosting requires application in passenger_wsgi
-
-
-
-# MySQL configurations
-# app.config['MYSQL_DATABASE_USER'] = 'pickles411_admin'
-# app.config['MYSQL_DATABASE_PASSWORD'] = '411admin411'
-# app.config['MYSQL_DATABASE_DB'] = 'pickles249_test'
-# app.config['MYSQL_DATABASE_HOST'] = '_______________________________________'
-# mysql=MySQL(app)
-
-# curr = mysql.connect()
-# cursor = curr.cursor()	
+	
 
 @app.route("/")
 def main():
@@ -23,9 +15,14 @@ def main():
 @app.route("/main")
 def m():
     return render_template('index.html')
-@app.route("/showUsers")
+@app.route("/showUsers", methods='POST')
 def showUsers():
-    return render_template('showUser.html')
+    mariadb_connection = mariadb.connect(user='rootuser', password='', database='employees')
+    cursor = mariadb_connection.cursor()
+    cursor.execute("SELECT name,email FROM employees WHERE name=%s", ('john',))
+    return json.dumps({cursor[0]})
+    mariadb_connection.close()
+    
 
 @app.route('/showSignUp')
 def signUp():
