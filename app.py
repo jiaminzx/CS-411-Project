@@ -62,5 +62,6 @@ def signUp():
 
 
 ###remove below if hosting on cpanel
-# if __name__ == "__main__":
-#     app.run(debug=True)
+if __name__ == "__main__":
+    #app.run(debug=True)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=3306)
