@@ -1,20 +1,20 @@
 from flask import Flask, render_template, json, request
-#from flaskext.mysql import MySQL
+from flask.ext.mysql import MySQL
 
 app = Flask(__name__)
 application = app # our hosting requires application in passenger_wsgi
 
 
 
-# # MySQL configurations
-# app.config['MYSQL_DATABASE_USER'] = 'pickles411_admin'
-# app.config['MYSQL_DATABASE_PASSWORD'] = '411admin411'
-# app.config['MYSQL_DATABASE_DB'] = 'pickles249_test'
-# app.config['MYSQL_DATABASE_HOST'] = '_______________________________________'
-# mysql=MySQL(app)
+# MySQL configurations
+app.config['MYSQL_DATABASE_USER'] = 'pickles411_admin'
+app.config['MYSQL_DATABASE_PASSWORD'] = '411admin411'
+app.config['MYSQL_DATABASE_DB'] = 'pickles249_test'
+app.config['MYSQL_DATABASE_HOST'] = '_______________________________________'
+mysql=MySQL(app)
 
-# curr = mysql.connect()
-# cursor = curr.cursor()	
+curr = mysql.connect()
+cursor = curr.cursor()	
 
 @app.route("/")
 def main():
@@ -64,4 +64,4 @@ def signUp():
 ###remove below if hosting on cpanel
 if __name__ == "__main__":
     #app.run(debug=True)
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=3306)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=5000)
