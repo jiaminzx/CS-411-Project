@@ -17,7 +17,7 @@ def m():
     return render_template('index.html')
 @app.route("/showUsers")
 def showUsers():
-    mariadb_connection = mariadb.connect(user='root', password='', database='cs411project')
+    mariadb_connection = mariadb.connect(user='root', database='cs411project')
     cursor = mariadb_connection.cursor()
     cursor.execute("SELECT name,email FROM employees WHERE name=%s", ('john',))
     return json.dumps({cursor[0]})
