@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json, request
+from flask import Flask, render_template, json,jsonify, request
 #import MySQL
 import mysql.connector as mariadb
 
@@ -22,8 +22,8 @@ def showUsers():
     cursor = mariadb_connection.cursor()
     cursor.execute("SELECT * FROM users")
     rows=cursor.fetchall()
-    json.dumps({'email for john':str(rows[1])})
-    return render_template("showUser.html",rows=rows)
+    return jsonify(rows)
+    # return render_template("showUser.html",rows=rows)
     mariadb_connection.close()
     
 
