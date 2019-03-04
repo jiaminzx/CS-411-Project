@@ -22,7 +22,7 @@ def showUsers():
     cursor = mariadb_connection.cursor()
     cursor.execute("SELECT * FROM users")
     rows=cursor.fetchall()
-    print( rows)
+    json.dumps({'email for john':str(rows[1])})
     return render_template("showUser.html",rows=rows)
     mariadb_connection.close()
     
