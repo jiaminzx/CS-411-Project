@@ -21,11 +21,9 @@ def showUsers():
     mariadb_connection = mariadb.connect(user='username', password='password', database='dbname')
     cursor = mariadb_connection.cursor()
     cursor.execute("SELECT name,email FROM users WHERE name=%s", ('john',))
-    ret='hello'
-    for name, email in cursor:
-        print("First name: {}, Last name: {}").format(name,email)
-        ret=email
-    return json.dumps({ret})
+    rows=cursor.fetchall()
+    
+    return render_emplate("showUser.html",rows=rows)
     mariadb_connection.close()
     
 
