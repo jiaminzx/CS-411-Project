@@ -20,7 +20,7 @@ def m():
 def showUsers():
     mariadb_connection = mariadb.connect(user='username', password='password', database='users')
     cursor = mariadb_connection.cursor()
-    cursor.execute("SELECT name,email FROM employees WHERE name=%s", ('john',))
+    cursor.execute("SELECT name,email FROM users WHERE name=%s", ('john',))
 
     return json.dumps({cursor[0]})
     mariadb_connection.close()
