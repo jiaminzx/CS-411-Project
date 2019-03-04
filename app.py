@@ -15,7 +15,7 @@ def main():
 @app.route("/main")
 def m():
     return render_template('index.html')
-@app.route("/showUsers", methods="POST")
+@app.route("/showUsers")
 def showUsers():
     mariadb_connection = mariadb.connect(user='rootuser', password='', database='employees')
     cursor = mariadb_connection.cursor()
