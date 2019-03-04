@@ -20,7 +20,7 @@ def m():
 def showUsers():
     mariadb_connection = mariadb.connect(user='username', password='password', database='dbname')
     cursor = mariadb_connection.cursor()
-    cursor.execute("SELECT name,email FROM users)
+    cursor.execute("SELECT * FROM users")
     rows=cursor.fetchall()
     print( rows)
     return render_template("showUser.html",rows=rows)
