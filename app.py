@@ -18,9 +18,9 @@ def m():
 
 @app.route("/showUsers")
 def showUsers():
-    mariadb_connection = mariadb.connect(user='username', password='password', database='users')
+    mariadb_connection = mariadb.connect(user='username', password='password', database='dbname')
     cursor = mariadb_connection.cursor()
-    cursor.execute("SELECT name,email FROM users WHERE name=%s", ('john',))
+    cursor.execute("SELECT name,email FROM  WHERE name=%s", ('john',))
 
     return json.dumps({cursor[0]})
     mariadb_connection.close()
