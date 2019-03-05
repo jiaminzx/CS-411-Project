@@ -5,15 +5,11 @@ import mysql.connector as mariadb
 
 
 app = Flask(__name__)
-application = app # our hosting requires application in passenger_wsgi
+application = app 
 	
 
 @app.route("/")
 def main():
-    return render_template('index.html')
-
-@app.route("/main")
-def m():
     return render_template('index.html')
 
 @app.route("/showUsers")
