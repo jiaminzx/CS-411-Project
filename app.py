@@ -18,7 +18,7 @@ def m():
 
 @app.route("/showUsers")
 def showUsers():
-    mariadb_connection = mariadb.connect(user='username', password='password', database='dbname')
+    mariadb_connection = mariadb.connect(user='username', password='password', database='cs411project')
     cursor = mariadb_connection.cursor()
     cursor.execute("SELECT * FROM users")
     rows=cursor.fetchall()
@@ -28,8 +28,5 @@ def showUsers():
     mariadb_connection.close()
     
 
-@app.route('/showSignUp')
-def signUp():
-    return render_template('index2.html')
 if __name__ == "__main__":
     app.run(host='sp19-cs411-36.cs.illinois.edu', port=8080)
