@@ -32,4 +32,4 @@ def showUsers():
 def signUp():
     return render_template('index2.html')
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=5000)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8080)
