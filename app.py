@@ -24,9 +24,8 @@ def showUsers():
     rows=cursor.fetchall()
     
     return jsonify(rows)
-    # return render_template("showUser.html",rows=rows)
     mariadb_connection.close()
     
 
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8080)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
