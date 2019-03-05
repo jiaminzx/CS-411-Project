@@ -6,7 +6,7 @@ import mysql.connector as mariadb
 
 app = Flask(__name__)
 application = app # our hosting requires application in passenger_wsgi
-	
+
 
 @app.route("/")
 def main():
@@ -14,7 +14,7 @@ def main():
 
 @app.route("/main")
 def m():
-    return render_template('index.html')
+    return render_template('index.html') 
 
 @app.route("/showUsers")
 def showUsers():
@@ -22,11 +22,11 @@ def showUsers():
     cursor = mariadb_connection.cursor()
     cursor.execute("SELECT * FROM users")
     rows=cursor.fetchall()
-    
+
     return jsonify(rows)
     # return render_template("showUser.html",rows=rows)
     mariadb_connection.close()
-    
+
 
 @app.route('/showSignUp')
 def signUp():
@@ -38,10 +38,10 @@ def signUp():
 
     #     # validate the received values
     #     if _name and _email and _password:
-            
+
     #         # All Good, let's call MySQL
-            
-           
+
+
     #         _hashed_password = generate_password_hash(_password)
     #         cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
     #         data = cursor.fetchall()
@@ -57,7 +57,7 @@ def signUp():
     # except Exception as e:
     #     return json.dumps({'error':str(e)})
     # finally:
-    #     cursor.close() 
+    #     cursor.close()
     #     conn.close()
 
 
