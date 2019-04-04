@@ -5,8 +5,8 @@ import mysql.connector as mariadb
 
 
 app = Flask(__name__)
-application = app 
-	
+application = app
+
 
 @app.route("/")
 def main():
@@ -18,10 +18,10 @@ def showUsers():
     cursor = mariadb_connection.cursor()
     cursor.execute("SELECT * FROM users")
     rows=cursor.fetchall()
-    
+
     return jsonify(rows)
     mariadb_connection.close()
-    
+
 
 if __name__ == "__main__":
     app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
