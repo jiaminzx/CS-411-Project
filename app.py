@@ -12,7 +12,12 @@ application = app # our hosting requires application in passenger_wsgi
 
 @app.route("/")
 def main():
-    return render_template('index2.html')
+    return render_template('index.html')
+
+
+@app.route("/main")
+def m():
+    return render_template('index.html')
 
 @app.route("/showUsers")
 def showUsers():
@@ -24,48 +29,33 @@ def showUsers():
 
 @app.route('/showSignUp')
 def signUp():
-    adduser()
     return render_template('index2.html')
-    # try:
-    #     _name = request.form['inputName']
-    #     _email = request.form['inputEmail']
-    #     _password = request.form['inputPassword']
 
-    #     # validate the received values
-    #     if _name and _email and _password:
+@app.route('/showSignUp/handle_data', methods=['POST'])
+def handle_data():
+    # print "HEEEEEEERE"
+    if request.method == 'POST':
+        projectpath = request.form['projectFilepath']
+        print projectpath
 
-    #         # All Good, let's call MySQL
+    return render_template('index2.html')
 
-
-    #         _hashed_password = generate_password_hash(_password)
-    #         cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
-    #         data = cursor.fetchall()
-
-    #         if len(data) is 0:
-    #             conn.commit()
-    #             return json.dumps({'message':'User created successfully !'})
-    #         else:
-    #             return json.dumps({'error':str(data[0])})
-    #     else:
-    #         return json.dumps({'html':'<span>Enter the required fields</span>'})
-
-    # except Exception as e:
-    #     return json.dumps({'error':str(e)})
-    # finally:
-    #     cursor.close()
-    #     conn.close()
-def adduser():
-    print "Entered"
-    try:
-        name = request.form['inputName']
-        password = request.form['inputPassword']
-        print name,password
-        cursor.execute("INSERT INTO users (username, password) VALUES (%s,%s)",(name, password))
-        db.commit()
-        print "Registered"
-    except Exception as e:
-       return(str(e))
     return
+# @app.route('/addU')
+@app.route('/showSignUp/adduser', methods=['POST'])
+def adduser():
+    # print "Entered"
+    if request.method == 'POST':
+        try:
+            name = request.form['inputName']
+            password = request.form['inputPassword']
+            print name, password
+            cursor.execute("INSERT INTO users (username, password) VALUES (%s,%s)",(name, password))
+            db.commit()
+            # print "Registered"
+        except Exception as e:
+           return(str(e))
+    return render_template('index2.html')
 
 if __name__ == "__main__":
     app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
