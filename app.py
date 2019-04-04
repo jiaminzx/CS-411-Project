@@ -2,6 +2,9 @@ from flask import Flask, render_template, json,jsonify, request
 #import MySQL
 import mysql.connector as mariadb
 
+db = mariadb.connect(user='root', password='password', database='cs411project')
+cursor = db.cursor()
+#db.close() needs to be called to close connection
 
 
 app = Flask(__name__)
@@ -9,21 +12,19 @@ application = app # our hosting requires application in passenger_wsgi
 
 @app.route("/")
 def main():
-    return render_template('index.html')
+    return render_template('index2.html')
 
 @app.route("/showUsers")
 def showUsers():
-    mariadb_connection = mariadb.connect(user='username', password='password', database='cs411project')
-    cursor = mariadb_connection.cursor()
     cursor.execute("SELECT * FROM users")
     rows=cursor.fetchall()
 
     return jsonify(rows)
-    mariadb_connection.close()
 
 
 @app.route('/showSignUp')
 def signUp():
+    adduser()
     return render_template('index2.html')
     # try:
     #     _name = request.form['inputName']
@@ -53,6 +54,18 @@ def signUp():
     # finally:
     #     cursor.close()
     #     conn.close()
+def adduser():
+    print "Entered"
+    try:
+        name = request.form['inputName']
+        password = request.form['inputPassword']
+        print name,password
+        cursor.execute("INSERT INTO users (username, password) VALUES (%s,%s)",(name, password))
+        db.commit()
+        print "Registered"
+    except Exception as e:
+       return(str(e))
+    return
 
 if __name__ == "__main__":
     app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
