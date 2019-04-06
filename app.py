@@ -1,9 +1,11 @@
-from flask import Flask, render_template, json,jsonify, request
+from flask import Flask, render_template, json, jsonify, request
 #import MySQL
 import mysql.connector as mariadb
 
-db = mariadb.connect(user='root', password='password', database='cs411project')
+db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
 cursor = db.cursor()
+
+
 #db.close() needs to be called to close connection
 
 
@@ -36,11 +38,11 @@ def handle_data():
     # print "HEEEEEEERE"
     if request.method == 'POST':
         projectpath = request.form['projectFilepath']
-        print projectpath
+        #print projectpath
 
     return render_template('index2.html')
 
-    return
+  
 # @app.route('/addU')
 @app.route('/showSignUp/adduser', methods=['POST'])
 def adduser():
@@ -49,13 +51,15 @@ def adduser():
         try:
             name = request.form['inputName']
             password = request.form['inputPassword']
-            print name, password
-            cursor.execute("INSERT INTO users (username, password) VALUES (%s,%s)",(name, password))
+            #print name, password
+            cursor.execute("INSERT INTO users (name, email) VALUES (%s,%s)",(name, password))
             db.commit()
             # print "Registered"
         except Exception as e:
-           return(str(e))
+          return(str(e))
     return render_template('index2.html')
 
-if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
+# #comment out when hosting on cpanel
+
+# if __name__ == "__main__":
+#     app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
