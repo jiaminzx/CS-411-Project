@@ -2,7 +2,7 @@ from flask import Flask, render_template, json, jsonify, request
 #import MySQL
 import mysql.connector as mariadb
 
-##Use this line for cPanel
+# #Use this line for cPanel
 # db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
 ##Use this line for VM
 db = mariadb.connect(user='root', password='password', database='cs411project')
@@ -30,7 +30,7 @@ def showUsers():
     rows=cursor.fetchall()
 
     output = jsonify(rows)
-    print(output)
+    print rows
 
     return output
 
@@ -66,8 +66,14 @@ def adduser():
             username = request.form['inputName']
             password = request.form['inputPassword']
             email = request.form['inputEmail']
-            #print name, password
-            cursor.execute("INSERT INTO users (name, email, password) VALUES (%s,%s, %s)",(username, email, password))
+
+            cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
+            rows=cursor.fetchall()
+            if len(rows) != 0:
+                print "Email already in use"
+                return "Email already in use"
+
+            cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password) VALUES (%s,%s, %s)",(username, email, password))
             db.commit()
             # print "Registered"
         except Exception as e:
@@ -82,25 +88,32 @@ def moduser():
             username = request.form['inputName']
             password = request.form['inputPassword']
             email = request.form['inputEmail']
-            #print name, password
+
+            try:
+                cursor.execute('UPDATE LOW_PRIORITY users SET name="%s" WHERE email="%s"' % (username, email))
+                db.commit()
+            except Exception as e:
+              return(str(e))
             # cursor.execute("INSERT INTO users (name, email, password) VALUES (%s,%s, %s)",(username, email, password))
             # db.commit()
-            # print "Registered"
+
         except Exception as e:
           return(str(e))
     return render_template('modify.html')
 
 @app.route('/showDelete', methods=['POST'])
 def deluser():
-    print "Entered modUser"
+    print "Entered delUser"
     if request.method == 'POST':
         try:
             username = request.form['inputName']
             password = request.form['inputPassword']
             email = request.form['inputEmail']
-            #print name, password
-            # cursor.execute("INSERT INTO users (name, email, password) VALUES (%s,%s, %s)",(username, email, password))
-            # db.commit()
+            try:
+                cursor.execute('DELETE FROM users WHERE name="%s" and email="%s" and password="%s"' % (username, email, password))
+                db.commit()
+            except Exception as e:
+              return(str(e))
             # print "Registered"
         except Exception as e:
           return(str(e))
