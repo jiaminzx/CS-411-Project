@@ -66,14 +66,15 @@ def adduser():
             username = request.form['inputName']
             password = request.form['inputPassword']
             email = request.form['inputEmail']
-
+            height =  request.form['inputHeight']
+            sex = request.form['inputGender']
             cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
             rows=cursor.fetchall()
             if len(rows) != 0:
                 #print "Email already in use"
                 return "Email already in use"
 
-            cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password) VALUES (%s,%s, %s)",(username, email, password))
+            cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex) VALUES (%s,%s, %s, %s, %s)",(username, email, password, height, sex))
             db.commit()
             # print "Registered"
         except Exception as e:
@@ -88,9 +89,10 @@ def moduser():
             username = request.form['inputName']
             password = request.form['inputPassword']
             email = request.form['inputEmail']
-
+            height =  request.form['inputHeight']
+            sex = request.form['inputGender']
             try:
-                cursor.execute('UPDATE LOW_PRIORITY users SET name="%s" WHERE email="%s"' % (username, email))
+                cursor.execute('UPDATE LOW_PRIORITY users SET name="%s", height="%s",sex="%s" WHERE email="%s"' % (username, height, sex, email))
                 db.commit()
             except Exception as e:
               return(str(e))
