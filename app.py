@@ -76,7 +76,7 @@ def deluser():
         try:
             email = request.form['inputEmail']
             #print name, password
-            cursor.execute("DELETE FROM users WHERE email = %s", (email))
+            cursor.execute("DELETE FROM users WHERE email = %s" % (email))
             db.commit()
             # print "Registered"
         except Exception as e:
