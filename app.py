@@ -2,10 +2,10 @@ from flask import Flask, render_template, json, jsonify, request
 #import MySQL
 import mysql.connector as mariadb
 
-# #Use this line for cPanel
-# db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
-##Use this line for VM
-db = mariadb.connect(user='root', password='password', database='cs411project')
+#Use this line for cPanel
+db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
+# #Use this line for VM
+# db = mariadb.connect(user='root', password='password', database='cs411project')
 cursor = db.cursor()
 
 
@@ -30,7 +30,7 @@ def showUsers():
     rows=cursor.fetchall()
 
     output = jsonify(rows)
-    print rows
+    #print rows
 
     return output
 
@@ -60,7 +60,7 @@ def handle_data():
 # @app.route('/addU')
 @app.route('/showSignUp', methods=['POST'])
 def adduser():
-    print "adduser Entered"
+    #print "adduser Entered"
     if request.method == 'POST':
         try:
             username = request.form['inputName']
@@ -70,7 +70,7 @@ def adduser():
             cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
             rows=cursor.fetchall()
             if len(rows) != 0:
-                print "Email already in use"
+                #print "Email already in use"
                 return "Email already in use"
 
             cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password) VALUES (%s,%s, %s)",(username, email, password))
@@ -82,7 +82,7 @@ def adduser():
 
 @app.route('/showModify', methods=['POST'])
 def moduser():
-    print "Entered modUser"
+    #print "Entered modUser"
     if request.method == 'POST':
         try:
             username = request.form['inputName']
@@ -103,7 +103,7 @@ def moduser():
 
 @app.route('/showDelete', methods=['POST'])
 def deluser():
-    print "Entered delUser"
+    #print "Entered delUser"
     if request.method == 'POST':
         try:
             username = request.form['inputName']
@@ -121,5 +121,5 @@ def deluser():
 
 
 # #comment out when hosting on cpanel
-if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
+# if __name__ == "__main__":
+#     app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
