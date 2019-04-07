@@ -34,19 +34,14 @@ def showUsers():
 
     return output
 
-@app.route("/delusers")
-def showUsers():
-    cursor.execute("SELECT * FROM users")
-    rows=cursor.fetchall()
-
-    output = jsonify(rows)
-    print(output)
-
-    return output
 
 @app.route('/showSignUp')
 def signUp():
     return render_template('signup.html')
+
+@app.route('/deletepg')
+def signUp():
+    return render_template('delusers.html')
 
 @app.route('/showSignUp/handle_data', methods=['POST'])
 def handle_data():
