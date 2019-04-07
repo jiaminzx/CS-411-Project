@@ -2,7 +2,10 @@ from flask import Flask, render_template, json, jsonify, request
 #import MySQL
 import mysql.connector as mariadb
 
-db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
+##Use this line for cPanel
+# db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
+##Use this line for VM
+db = mariadb.connect(user='root', password='password', database='cs411project')
 cursor = db.cursor()
 
 
@@ -14,24 +17,27 @@ application = app # our hosting requires application in passenger_wsgi
 
 @app.route("/")
 def main():
-    return render_template('index.html')
+    return render_template('home.html')
 
 
 @app.route("/main")
 def m():
-    return render_template('index.html')
+    return render_template('home.html')
 
 @app.route("/showUsers")
 def showUsers():
     cursor.execute("SELECT * FROM users")
     rows=cursor.fetchall()
 
-    return jsonify(rows)
+    output = jsonify(rows)
+    print(output)
+
+    return output
 
 
 @app.route('/showSignUp')
 def signUp():
-    return render_template('index2.html')
+    return render_template('signup.html')
 
 @app.route('/showSignUp/handle_data', methods=['POST'])
 def handle_data():
@@ -40,26 +46,26 @@ def handle_data():
         projectpath = request.form['projectFilepath']
         #print projectpath
 
-    return render_template('index2.html')
+    return render_template('signup.html')
 
-  
+
 # @app.route('/addU')
 @app.route('/showSignUp/adduser', methods=['POST'])
 def adduser():
     # print "Entered"
     if request.method == 'POST':
         try:
-            name = request.form['inputName']
+            username = request.form['inputName']
             password = request.form['inputPassword']
+            email = request.form['inputEmail']
             #print name, password
-            cursor.execute("INSERT INTO users (name, email) VALUES (%s,%s)",(name, password))
+            cursor.execute("INSERT INTO users (name, email, password) VALUES (%s,%s, %s)",(username, email, password))
             db.commit()
             # print "Registered"
         except Exception as e:
           return(str(e))
-    return render_template('index2.html')
+    return render_template('signup.html')
 
 # #comment out when hosting on cpanel
-
-# if __name__ == "__main__":
-#     app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
+if __name__ == "__main__":
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
