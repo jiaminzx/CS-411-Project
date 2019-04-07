@@ -50,7 +50,7 @@ def signUp():
 #         projectpath = request.form['projectFilepath']
         #print projectpath
 
-    return render_template('signup.html')
+    # return render_template('signup.html')
 
 
 # @app.route('/addU')
