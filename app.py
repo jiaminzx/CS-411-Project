@@ -23,10 +23,32 @@ def m():
 
 @app.route("/showUsers")
 def showUsers():
-    cursor.execute("SELECT * FROM users")
-    rows=cursor.fetchall()
+    
+    return render_template('showUser.html')
 
-    return jsonify(rows)
+@app.route("/showMen",methods=['GET'])
+def showMen():
+    if request.method == 'GET':
+        try:
+            #CHANGE QUERY TO MATCH DATABASE
+            cursor.execute("SELECT * FROM users WHERE name='john'")
+            rows=cursor.fetchall()
+        except Exception as e:
+          return(str(e))
+    
+    return render_template('showMen.html', data=rows)
+
+@app.route("/showWomen",methods=['GET'])
+def showWomen():
+    if request.method == 'GET':
+        try:
+            #CHANGE QUERE TO MATCH DATABASE
+            cursor.execute("SELECT * FROM users")
+            rows=cursor.fetchall()
+        except Exception as e:
+          return(str(e))
+    
+    return render_template('showWomen.html', data=rows)
 
 
 @app.route('/showSignUp')
@@ -51,7 +73,7 @@ def adduser():
         try:
             name = request.form['inputName']
             password = request.form['inputPassword']
-            #print name, password
+            #CHANGE TO MATCH DATABASE
             cursor.execute("INSERT INTO users (name, email) VALUES (%s,%s)",(name, password))
             db.commit()
             # print "Registered"
@@ -60,6 +82,6 @@ def adduser():
     return render_template('index2.html')
 
 # #comment out when hosting on cpanel
-
-# if __name__ == "__main__":
-#     app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
+#COMMENT WHEN HOSTING ON CPANEL
+if __name__ == "__main__":
+    app.run()
