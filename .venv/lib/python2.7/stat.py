@@ -1,1 +1,1 @@
-/usr/lib64/python2.7/stat.py
+C:/usr/lib64/python2.7/stat.py

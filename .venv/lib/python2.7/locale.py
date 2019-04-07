@@ -1,1 +1,1 @@
-/usr/lib64/python2.7/locale.py
+C:/usr/lib64/python2.7/locale.py
