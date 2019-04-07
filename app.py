@@ -70,7 +70,7 @@ def adduser():
           return(str(e))
     return render_template('signup.html')
 
-@app.route('/showSignUp/deluser', methods=['POST'])
+@app.route('/deletepg/deluser', methods=['POST'])
 def deluser():
     if request.method == 'POST':
         try:
