@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, json, jsonify, request
 #import MySQL
 import mysql.connector as mariadb
@@ -18,11 +19,6 @@ application = app # our hosting requires application in passenger_wsgi
 @app.route("/")
 def main():
     return render_template('home.html')
-
-
-# @app.route("/main")
-# def m():
-#     return render_template('home.html')
 
 
 @app.route('/showSignUp')
@@ -144,3 +140,5 @@ def showWomen():
 # if __name__ == "__main__":
 # #     app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
 #     app.run()
+
+
