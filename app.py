@@ -39,9 +39,9 @@ def showUsers():
 def signUp():
     return render_template('signup.html')
 
-# @app.route('/deletepg')
-# def signUp():
-#     return render_template('delusers.html')
+@app.route('/deletepg')
+def deluser():
+    return render_template('delusers.html')
 
 # @app.route('/showSignUp/handle_data', methods=['POST'])
 # def handle_data():
