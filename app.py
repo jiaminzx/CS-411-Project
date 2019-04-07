@@ -39,6 +39,14 @@ def showUsers():
 def signUp():
     return render_template('signup.html')
 
+@app.route('/showModify')
+def modify():
+    return render_template('modify.html')
+
+@app.route('/showDelete')
+def delete():
+    return render_template('delete.html')
+
 @app.route('/showSignUp/handle_data', methods=['POST'])
 def handle_data():
     # print "HEEEEEEERE"
@@ -50,9 +58,9 @@ def handle_data():
 
 
 # @app.route('/addU')
-@app.route('/showSignUp/adduser', methods=['POST'])
+@app.route('/showSignUp', methods=['POST'])
 def adduser():
-    # print "Entered"
+    print "adduser Entered"
     if request.method == 'POST':
         try:
             username = request.form['inputName']
@@ -66,6 +74,39 @@ def adduser():
           return(str(e))
     return render_template('signup.html')
 
+@app.route('/showModify', methods=['POST'])
+def moduser():
+    print "Entered modUser"
+    if request.method == 'POST':
+        try:
+            username = request.form['inputName']
+            password = request.form['inputPassword']
+            email = request.form['inputEmail']
+            #print name, password
+            # cursor.execute("INSERT INTO users (name, email, password) VALUES (%s,%s, %s)",(username, email, password))
+            # db.commit()
+            # print "Registered"
+        except Exception as e:
+          return(str(e))
+    return render_template('modify.html')
+
+@app.route('/showDelete', methods=['POST'])
+def deluser():
+    print "Entered modUser"
+    if request.method == 'POST':
+        try:
+            username = request.form['inputName']
+            password = request.form['inputPassword']
+            email = request.form['inputEmail']
+            #print name, password
+            # cursor.execute("INSERT INTO users (name, email, password) VALUES (%s,%s, %s)",(username, email, password))
+            # db.commit()
+            # print "Registered"
+        except Exception as e:
+          return(str(e))
+    return render_template('delete.html')
+
+
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
