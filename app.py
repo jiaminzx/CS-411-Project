@@ -70,18 +70,18 @@ def adduser():
           return(str(e))
     return render_template('signup.html')
 
-@app.route('/showSignUp/deluser', methods=['POST'])
-def deluser():
-    if request.method == 'POST':
-        try:
-            email = request.form['inputEmail']
-            #print name, password
-            cursor.execute("DELETE FROM users WHERE email = %s", email)
-            db.commit()
-            # print "Registered"
-        except Exception as e:
-          return(str(e))
-    return render_template('delusers.html')
+# @app.route('/showSignUp/deluser', methods=['POST'])
+# def deluser():
+#     if request.method == 'POST':
+#         try:
+#             email = request.form['inputEmail']
+#             #print name, password
+#             cursor.execute("DELETE FROM users WHERE email = %s", email)
+#             db.commit()
+#             # print "Registered"
+#         except Exception as e:
+#           return(str(e))
+#     return render_template('delusers.html')
 
 
 # #comment out when hosting on cpanel
