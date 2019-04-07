@@ -34,6 +34,15 @@ def showUsers():
 
     return output
 
+@app.route("/delusers")
+def showUsers():
+    cursor.execute("SELECT * FROM users")
+    rows=cursor.fetchall()
+
+    output = jsonify(rows)
+    print(output)
+
+    return output
 
 @app.route('/showSignUp')
 def signUp():
