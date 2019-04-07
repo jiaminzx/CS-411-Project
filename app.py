@@ -3,9 +3,9 @@ from flask import Flask, render_template, json, jsonify, request
 import mysql.connector as mariadb
 
 #Use this line for cPanel
-db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
+#db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
 ##Use this line for VM
-#db = mariadb.connect(user='root', password='password', database='cs411project')
+db = mariadb.connect(user='root', password='password', database='cs411project')
 cursor = db.cursor()
 
 
@@ -40,7 +40,7 @@ def signUp():
     return render_template('signup.html')
 
 @app.route('/deletepg')
-def deluser():
+def delUser():
     return render_template('delusers.html')
 
 # @app.route('/showSignUp/handle_data', methods=['POST'])
@@ -70,13 +70,13 @@ def adduser():
           return(str(e))
     return render_template('signup.html')
 
-@app.route('/deletepg/deluser', methods=['POST'])
+@app.route('/deletepg/deluser', methods=['POST'],endpoint = 'deluser')
 def deluser():
     if request.method == 'POST':
         try:
             email = request.form['inputEmail']
             #print name, password
-            cursor.execute("DELETE FROM users WHERE email = %s", (email))
+            cursor.execute("DELETE FROM users WHERE email = %s" % (email))
             db.commit()
             # print "Registered"
         except Exception as e:
@@ -85,5 +85,5 @@ def deluser():
 
 
 # #comment out when hosting on cpanel
-#if __name__ == "__main__":
-#    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
+if __name__ == "__main__":
+	app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
