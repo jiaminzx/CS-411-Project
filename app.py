@@ -23,7 +23,7 @@ def m():
 
 @app.route("/showUsers")
 def showUsers():
-    
+
     return render_template('showUser.html')
 
 @app.route("/showMen",methods=['GET'])
@@ -31,11 +31,11 @@ def showMen():
     if request.method == 'GET':
         try:
             #CHANGE QUERY TO MATCH DATABASE
-            cursor.execute("SELECT * FROM users WHERE name='john'")
+            cursor.execute("SELECT * FROM users WHERE sex = 'M'")
             rows=cursor.fetchall()
         except Exception as e:
           return(str(e))
-    
+
     return render_template('showMen.html', data=rows)
 
 @app.route("/showWomen",methods=['GET'])
@@ -43,11 +43,11 @@ def showWomen():
     if request.method == 'GET':
         try:
             #CHANGE QUERE TO MATCH DATABASE
-            cursor.execute("SELECT * FROM users")
+            cursor.execute("SELECT * FROM users WHERE sex = 'F'")
             rows=cursor.fetchall()
         except Exception as e:
           return(str(e))
-    
+
     return render_template('showWomen.html', data=rows)
 
 
@@ -64,7 +64,7 @@ def handle_data():
 
     return render_template('index2.html')
 
-  
+
 # @app.route('/addU')
 @app.route('/showSignUp/adduser', methods=['POST'])
 def adduser():
