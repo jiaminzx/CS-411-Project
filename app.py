@@ -20,9 +20,9 @@ def main():
     return render_template('home.html')
 
 
-@app.route("/main")
-def m():
-    return render_template('home.html')
+# @app.route("/main")
+# def m():
+#     return render_template('home.html')
 
 @app.route("/showUsers")
 def showUsers():
@@ -43,11 +43,11 @@ def signUp():
 # def signUp():
 #     return render_template('delusers.html')
 
-@app.route('/showSignUp/handle_data', methods=['POST'])
-def handle_data():
-    # print "HEEEEEEERE"
-    if request.method == 'POST':
-        projectpath = request.form['projectFilepath']
+# @app.route('/showSignUp/handle_data', methods=['POST'])
+# def handle_data():
+#     # print "HEEEEEEERE"
+#     if request.method == 'POST':
+#         projectpath = request.form['projectFilepath']
         #print projectpath
 
     return render_template('signup.html')
