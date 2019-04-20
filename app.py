@@ -10,7 +10,6 @@ db = mariadb.connect(user='pickles249_admin', password='csProject411!', database
 # db = mariadb.connect(user='root', password='password', database='cs411project')
 cursor = db.cursor()
 
-
 #db.close() needs to be called to close connection
 
 app = Flask(__name__)
@@ -19,7 +18,6 @@ application = app # our hosting requires application in passenger_wsgi
 @app.route("/")
 def main():
     return render_template('home.html')
-
 
 @app.route('/showSignUp')
 def signUp():
