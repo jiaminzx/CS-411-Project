@@ -82,7 +82,7 @@ def get_profile():
         except Exception as e:
           return(str(e))
 
-        return render_template('profile.html', data = row)
+    return render_template('profile.html', data = row)
 
 @app.route('/showModify', methods=['POST'])
 def moduser():
