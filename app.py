@@ -1,6 +1,7 @@
 
 
 from flask import Flask, render_template, json, jsonify, request
+from flask import flash, redirect, session, abort
 #import MySQL
 import mysql.connector as mariadb
 
@@ -23,23 +24,23 @@ def main():
 def signUp():
     return render_template('signup.html')
 
-@app.route('/showModify')
-def modify():
-    return render_template('modify.html')
+# @app.route('/showModify')
+# def modify():
+#     return render_template('modify.html')
 
-@app.route('/showDelete')
-def delete():
-    return render_template('delete.html')
+# @app.route('/showDelete')
+# def delete():
+#     return render_template('delete.html')
 
 @app.route('/showSignUp/handle_data', methods=['POST'])
 def handle_data():
     # print "HEEEEEEERE"
     if request.method == 'POST':
         projectpath = request.form['projectFilepath']
-        #print projectpath
 
-    # return render_template('signup.html')
-
+@app.route("/userHome")
+def userHome():
+    return render_template('userHome.html')     
 
 # @app.route('/addU')
 @app.route('/showSignUp', methods=['POST'])
@@ -47,18 +48,28 @@ def adduser():
     #print "adduser Entered"
     if request.method == 'POST':
         try:
+            #required: name, password, email, height, sex, education, ethnicity
             username = request.form['inputName']
             password = request.form['inputPassword']
             email = request.form['inputEmail']
             height =  request.form['inputHeight']
             sex = request.form['inputGender']
+            age = request.form['inputAge']
+            cursor.execute('SELECT * FROM users WHERE age="%d"' % (str(age)))
+            rows=cursor.fetchall()
+            if len(rows) != 0:
+                return "You must be above 18"
+            education = request.form['inputEducation']
+            ethnicity = request.form['inputEthnicity']
+
             cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
             rows=cursor.fetchall()
             if len(rows) != 0:
                 #print "Email already in use"
                 return "Email already in use"
 
-            cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex) VALUES (%s,%s, %s, %s, %s)",(username, email, password, height, sex))
+            cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity)"
+                           "VALUES (%s,%s, %s, %s, %s,%s,%s,%s)",(username, email, password, height, sex, age, education, ethnicity))
             db.commit()
             # print "Registered"
         except Exception as e:
@@ -105,10 +116,9 @@ def deluser():
           return(str(e))
     return render_template('delete.html')
 
-@app.route("/showUsers")
-def showUsers():
-
-    return render_template('showUser.html')
+# @app.route("/showUsers")
+# def showUsers():
+#     return render_template('showUser.html')
 
 @app.route("/showMen",methods=['GET'])
 def showMen():

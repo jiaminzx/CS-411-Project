@@ -18,11 +18,14 @@
         <nav>
           <ul class="nav nav-pills pull-right">
             <li role="presentation" ><a href="/">Home</a> |</li>
-            <li role="presentation"><a href="showUsers">Show Users</a> |</li>
+            <!-- <li role="presentation"><a href="showUsers">Show Users</a> |</li> -->
             <li role="presentation" class="active"><a href="#">Sign Up | </a></li>
-            <li role="presentation"><a href="showDelete">Delete </a> | </li>
-            <li role="presentation"><a href="showModify">Modify </a></li>
+            <!-- <li role="presentation"><a href="showDelete">Delete </a> | </li>
+            <li role="presentation"><a href="showModify">Modify </a></li> -->
           </ul>
+          <ul class="nav nav-pills pull-left">
+            <li role="presentation"><a href="SignIn">Sign in </a> | </li>
+        </ul>
         </nav>
         <h3 class="text-muted">Sign Up Here</h3>
       </div>
@@ -38,14 +41,19 @@
           <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
           <label for="inputHeight" class="sr-only">Height(inches)</label>
           <input type="number" name="inputHeight" id="inputHeight" class="form-control" placeholder="Height" required>
+
           <label for="inputGender" class="sr-only">Gender</label>
-          <input type="name" name="inputGender" id="inputGender" class="form-control" placeholder="Gender" required autofocus>          
+          <input type="name" name="inputGender" id="inputGender" class="form-control" placeholder="Gender" required autofocus>
+          <label for="inputAge" class="sr-only">age</label>
+          <input type="number" name="inputAge" id="inputAge" class="form-control" placeholder="Age" required autofocus>
+          <label for="inputEducation" class="sr-only">Education</label>
+          <input type="education" name="inputEducation" id="inputEducation" class="form-control" placeholder="Education" required autofocus>
+          <label for="inputEthnicity" class="sr-only">Ethnicity</label>
+          <input type="ethnicity" name="inputEthnicity" id="inputEthnicity" class="form-control" placeholder="Ethnicity" required autofocus>          
           <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
         </form>
 
       </div>
-
-
 
       <footer class="footer">
         <p>&copy; Company 2019</p>
