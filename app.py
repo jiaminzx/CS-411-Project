@@ -2,6 +2,7 @@
 
 from flask import Flask, render_template, json, jsonify, request
 from flask import flash, redirect, session, abort
+import re
 #import MySQL
 import mysql.connector as mariadb
 
@@ -38,10 +39,40 @@ def handle_data():
     if request.method == 'POST':
         projectpath = request.form['projectFilepath']
 
-@app.route("/userHome")
-def userHome():
-    return render_template('userHome.html')     
+@app.route("/userHome",methods=['GET'])
+def userHome(userID):
+    if request.method == 'GET':
+        pref=cursor.execute('SELECT orientation FROM users WHERE userID="%s"' % (userID))
+        gender=cursor.execute('SELECT gender FROM users WHERE userID="%s"' % (userID))
+        if pref=='straight' and gender.lower()=='f'
+            genderPref='Men'
+            try:
+                #CHANGE QUERY TO MATCH DATABASE
+                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+                rows=cursor.fetchall()
+            except Exception as e:
+            return(str(e))
+        elif pref=='straight' and gender.lower()=='m'
+            try:
+                #CHANGE QUERE TO MATCH DATABASE
+                genderPref='Women'
+                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+                rows=cursor.fetchall()
+            except Exception as e:
+            return(str(e))
+    
+    return render_template('userHome.html', data=rows, genderPreference=genderPref)     
 
+@app.route("/showMen")
+def showMen():
+    
+
+@app.route("/showWomen",methods=['GET'])
+def showWomen():
+    if request.method == 'GET':
+        
+
+    return render_template('showWomen.html', data=rows)
 # @app.route('/addU')
 @app.route('/showSignUp', methods=['POST'])
 def adduser():
@@ -61,7 +92,7 @@ def adduser():
                 return "You must be above 18"
             education = request.form['inputEducation']
             ethnicity = request.form['inputEthnicity']
-
+            orientation = request.form['orientation']
             cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
             rows=cursor.fetchall()
             if len(rows) != 0:
@@ -69,7 +100,7 @@ def adduser():
                 return "Email already in use"
 
             cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity)"
-                           "VALUES (%s,%s, %s, %s, %s,%s,%s,%s)",(username, email, password, height, sex, age, education, ethnicity))
+                           "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(name, email, password, height, sex, age, education, ethnicity,orientation))
             db.commit()
             # print "Registered"
         except Exception as e:
@@ -120,29 +151,7 @@ def deluser():
 # def showUsers():
 #     return render_template('showUser.html')
 
-@app.route("/showMen",methods=['GET'])
-def showMen():
-    if request.method == 'GET':
-        try:
-            #CHANGE QUERY TO MATCH DATABASE
-            cursor.execute("SELECT * FROM users WHERE sex = 'M'")
-            rows=cursor.fetchall()
-        except Exception as e:
-          return(str(e))
 
-    return render_template('showMen.html', data=rows)
-
-@app.route("/showWomen",methods=['GET'])
-def showWomen():
-    if request.method == 'GET':
-        try:
-            #CHANGE QUERE TO MATCH DATABASE
-            cursor.execute("SELECT * FROM users WHERE sex = 'F'")
-            rows=cursor.fetchall()
-        except Exception as e:
-          return(str(e))
-
-    return render_template('showWomen.html', data=rows)
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":

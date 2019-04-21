@@ -47,9 +47,18 @@
           <label for="inputAge" class="sr-only">age</label>
           <input type="number" name="inputAge" id="inputAge" class="form-control" placeholder="Age" required autofocus>
           <label for="inputEducation" class="sr-only">Education</label>
-          <input type="education" name="inputEducation" id="inputEducation" class="form-control" placeholder="Education" required autofocus>
+          <input type="education" name="inputEducation" id="inputEducation" class="form-control" placeholder="Education" required>
           <label for="inputEthnicity" class="sr-only">Ethnicity</label>
-          <input type="ethnicity" name="inputEthnicity" id="inputEthnicity" class="form-control" placeholder="Ethnicity" required autofocus>          
+          <input type="ethnicity" name="inputEthnicity" id="inputEthnicity" class="form-control" placeholder="Ethnicity" required>   
+          <input list="orientation">
+            <datalist id="orientation">
+              <option value="straight">
+              <option value="bi-sexual">
+              <option value="pan-sexual">
+              <option value="same-sex">
+              <option value="Asexual">
+            </datalist> 
+          <input type="orientation" name="orientation" id="orientation" class="form-control" placeholder="Orientation" required>      
           <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
         </form>
 
