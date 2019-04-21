@@ -51,7 +51,7 @@ def userHome(userID):
                 cursor.execute("SELECT * FROM users WHERE sex = 'M'")
                 rows=cursor.fetchall()
             except Exception as e:
-            return(str(e))
+                return(str(e))
         elif pref=='straight' and gender.lower()=='m':
             try:
                 #CHANGE QUERE TO MATCH DATABASE
@@ -59,7 +59,7 @@ def userHome(userID):
                 cursor.execute("SELECT * FROM users WHERE sex = 'F'")
                 rows=cursor.fetchall()
             except Exception as e:
-            return(str(e))
+                return(str(e))
     
     return render_template('userHome.html', data=rows, genderPreference=genderPref)     
 
