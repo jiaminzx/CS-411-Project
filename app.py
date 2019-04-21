@@ -63,16 +63,16 @@ def userHome(userID):
     
     return render_template('userHome.html', data=rows, genderPreference=genderPref)     
 
-@app.route("/showMen")
-def showMen():
+# @app.route("/showMen")
+# def showMen():
     
 
-@app.route("/showWomen",methods=['GET'])
-def showWomen():
-    if request.method == 'GET':
+# @app.route("/showWomen",methods=['GET'])
+# def showWomen():
+#     if request.method == 'GET':
         
 
-    return render_template('showWomen.html', data=rows)
+#    return render_template('showWomen.html', data=rows)
 # @app.route('/addU')
 @app.route('/showSignUp', methods=['POST'])
 def adduser():
