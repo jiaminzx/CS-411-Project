@@ -44,7 +44,7 @@ def userHome(userID):
     if request.method == 'GET':
         pref=cursor.execute('SELECT orientation FROM users WHERE userID="%s"' % (userID))
         gender=cursor.execute('SELECT gender FROM users WHERE userID="%s"' % (userID))
-        if pref=='straight' and gender.lower()=='f'
+        if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
             try:
                 #CHANGE QUERY TO MATCH DATABASE
@@ -52,7 +52,7 @@ def userHome(userID):
                 rows=cursor.fetchall()
             except Exception as e:
             return(str(e))
-        elif pref=='straight' and gender.lower()=='m'
+        elif pref=='straight' and gender.lower()=='m':
             try:
                 #CHANGE QUERE TO MATCH DATABASE
                 genderPref='Women'
