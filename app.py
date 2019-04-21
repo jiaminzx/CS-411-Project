@@ -55,7 +55,7 @@ def adduser():
             height =  request.form['inputHeight']
             sex = request.form['inputGender']
             age = request.form['inputAge']
-            cursor.execute('SELECT * FROM users WHERE age="%d"' % (str(age)))
+            cursor.execute('SELECT * FROM users WHERE age="%s"' % (age))
             rows=cursor.fetchall()
             if len(rows) != 0:
                 return "You must be above 18"
