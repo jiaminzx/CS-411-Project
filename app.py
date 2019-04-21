@@ -5,10 +5,10 @@ from flask import Flask, render_template, json, jsonify, request
 import mysql.connector as mariadb
 
 #Use this line for cPanel
-db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
+# db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
 #Use this line for VM
 # db = mariadb.connect(user='root', password='password', database='cs411project')
-cursor = db.cursor()
+# cursor = db.cursor()
 
 
 #db.close() needs to be called to close connection
@@ -19,7 +19,6 @@ application = app # our hosting requires application in passenger_wsgi
 @app.route("/")
 def main():
     return render_template('home.html')
-
 
 @app.route('/showSignUp')
 def signUp():
@@ -66,6 +65,22 @@ def adduser():
         except Exception as e:
           return(str(e))
     return render_template('signup.html')
+
+@app.route('/showSignIn')
+def showSignIn():
+    return render_template('signIn.html')
+
+@app.route('/showSignIn', methods = ['GET'])
+def get_profile():
+    if request.method == 'GET':
+        try:
+            password = request.form['inputPassword']
+            email = request.form['inputEmail']
+            cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
+            rows=cursor.fetchall()
+            assert len(rows) == 1, "Multiple profiles with same email"
+        except Exception as e:
+          return(str(e))
 
 @app.route('/showModify', methods=['POST'])
 def moduser():
@@ -137,7 +152,6 @@ def showWomen():
     return render_template('showWomen.html', data=rows)
 
 # #comment out when hosting on cpanel
-# if __name__ == "__main__":
+if __name__ == "__main__":
 # #     app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
-#     app.run()
-
+    app.run()
