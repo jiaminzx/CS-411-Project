@@ -44,9 +44,9 @@ def userHome():
     userID=1
     if request.method == 'GET':
         pref=cursor.execute('SELECT orientation FROM users WHERE userID="%s"' % (userID))
-        print(pref)
-        gender=cursor.execute('SELECT gender FROM users WHERE userID="%s"' % (userID))
-        print(gender)
+        # print(pref)
+        gender=cursor.execute('SELECT sex FROM users WHERE userID="%s"' % (userID))
+        # print(gender)
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
            
