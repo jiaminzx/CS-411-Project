@@ -10,7 +10,7 @@ import mysql.connector as mariadb
 db = mariadb.connect(user='root', password='password', database='m2z2')
 #Use this line for VM
 # db = mariadb.connect(user='root', password='password', database='cs411project')
-cursor = db.cursor()
+cursor = db.cursor(cursor_class=MySQLCursorPrepared)
 
 #db.close() needs to be called to close connection
 
@@ -45,10 +45,10 @@ def userHome():
     genderPref='M'
     if request.method == 'GET':
         rows=[]
-        
-        pref=cursor.execute('SELECT orientation FROM users WHERE userID="%s"' % (userID))
+        spq = """SELECT orientation FROM users WHERE userID="%d""""
+        pref=cursor.execute(spq, (userID))
         print(pref)
-        gender=cursor.execute('SELECT sex FROM users WHERE userID="%s"' % (userID))
+        gender=cursor.execute('SELECT sex FROM users WHERE userID="%d"' % (userID))
         print(gender)
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
