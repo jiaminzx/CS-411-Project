@@ -27,7 +27,7 @@ def signUp():
 
 @app.route('/SignIn')
 def modify():
-    return render_template('userHome.html')
+    return render_template('signup.html')
 
 # @app.route('/showDelete')
 # def delete():
@@ -148,10 +148,6 @@ def deluser():
         except Exception as e:
           return(str(e))
     return render_template('delete.html')
-
-# @app.route("/showUsers")
-# def showUsers():
-#     return render_template('showUser.html')
 
 
 
