@@ -25,9 +25,9 @@ def main():
 def signUp():
     return render_template('signup.html')
 
-# @app.route('/showModify')
-# def modify():
-#     return render_template('modify.html')
+@app.route('/SignIn')
+def modify():
+    return render_template('userHome.html')
 
 # @app.route('/showDelete')
 # def delete():
@@ -41,21 +41,23 @@ def handle_data():
 
 @app.route("/userHome",methods=['GET'])
 def userHome(userID):
+    
     if request.method == 'GET':
         pref=cursor.execute('SELECT orientation FROM users WHERE userID="%s"' % (userID))
         gender=cursor.execute('SELECT gender FROM users WHERE userID="%s"' % (userID))
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
+            flash(genderPref)
             try:
-                #CHANGE QUERY TO MATCH DATABASE
                 cursor.execute("SELECT * FROM users WHERE sex = 'M'")
                 rows=cursor.fetchall()
             except Exception as e:
                 return(str(e))
+
         elif pref=='straight' and gender.lower()=='m':
+            genderPref='Women' 
+            flash(genderPref)
             try:
-                #CHANGE QUERE TO MATCH DATABASE
-                genderPref='Women'
                 cursor.execute("SELECT * FROM users WHERE sex = 'F'")
                 rows=cursor.fetchall()
             except Exception as e:
@@ -100,7 +102,7 @@ def adduser():
                 return "Email already in use"
 
             cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity)"
-                           "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(name, email, password, height, sex, age, education, ethnicity,orientation))
+                           "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(username, email, password, height, sex, age, education, ethnicity,orientation))
             db.commit()
             # print "Registered"
         except Exception as e:
