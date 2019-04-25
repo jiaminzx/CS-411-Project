@@ -40,14 +40,14 @@ def handle_data():
         projectpath = request.form['projectFilepath']
 
 @app.route("/userHome",methods=['GET'])
-def userHome(userID):
-    
+def userHome():
+    userID=1
     if request.method == 'GET':
         pref=cursor.execute('SELECT orientation FROM users WHERE userID="%s"' % (userID))
         gender=cursor.execute('SELECT gender FROM users WHERE userID="%s"' % (userID))
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
-            flash(genderPref)
+           
             try:
                 cursor.execute("SELECT * FROM users WHERE sex = 'M'")
                 rows=cursor.fetchall()
@@ -56,7 +56,7 @@ def userHome(userID):
 
         elif pref=='straight' and gender.lower()=='m':
             genderPref='Women' 
-            flash(genderPref)
+           
             try:
                 cursor.execute("SELECT * FROM users WHERE sex = 'F'")
                 rows=cursor.fetchall()
