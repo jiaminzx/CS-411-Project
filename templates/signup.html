@@ -48,14 +48,13 @@
           <input type="education" name="inputEducation" id="inputEducation" class="form-control" placeholder="Education" required>
           <label for="inputEthnicity" class="sr-only">Ethnicity</label>
           <input type="ethnicity" name="inputEthnicity" id="inputEthnicity" class="form-control" placeholder="Ethnicity" required>   
-          <input list="orientation" name="orientation" id="orientation">
-            <datalist id="orientation">
-              <option value="straight">
-              <option value="bi-sexual">
-              <option value="pan-sexual">
-              <option value="same-sex">
-              <option value="Asexual">
-            </datalist> 
+          <label class="sr-only" for="rating">Rating for Cafe</label>
+            <select class="form-control" id="rating">
+                <option>straight</option>
+                <option>bi-sexual</option>
+                <option selected>no preference</option>
+                <option>gay</option>
+            </select>
           <!-- <input type="orientation"  class="form-control" required>       -->
           <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
         </form>
