@@ -10,7 +10,7 @@ import mysql.connector as mariadb
 db = mariadb.connect(user='root', password='password', database='m2z2')
 #Use this line for VM
 # db = mariadb.connect(user='root', password='password', database='cs411project')
-cursor = db.cursor(prepared=True)
+cursor = db.cursor()
 
 #db.close() needs to be called to close connection
 
@@ -45,11 +45,10 @@ def userHome():
     genderPref='M'
     if request.method == 'GET':
         rows=[]
-        # sql_select_query = """select * from python_developers where id = %s"""
-        # cursor.execute(sql_select_query, (ID, ))
-        pref=cursor.execute('SELECT orientation FROM users WHERE userID=%d', (userID,))
+        
+        pref=cursor.execute('SELECT orientation FROM users WHERE userID="%s"' % (userID))
         print(pref)
-        gender=cursor.execute("SELECT sex FROM users WHERE userID=%d", (userID,))
+        gender=cursor.execute('SELECT sex FROM users WHERE userID="%s"' % (userID))
         print(gender)
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
@@ -97,7 +96,6 @@ def adduser():
             
             cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity,orientation)"
                            "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(username, email, password, height, sex, age, education, ethnicity,orientation))
-            rows=cursor.fetchall()
             db.commit()
             # print "Registered"
         except Exception as e:
