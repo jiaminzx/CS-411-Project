@@ -42,14 +42,15 @@ def handle_data():
 @app.route("/userHome",methods=['GET'])
 def userHome():
     userID=1
+    genderPref='M'
     if request.method == 'GET':
+        rows=[]
         pref=cursor.execute('SELECT orientation FROM users WHERE userID="%d"' % (userID))
         print(pref)
         gender=cursor.execute('SELECT sex FROM users WHERE userID="%d"' % (userID))
         print(gender)
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
-           
             try:
                 cursor.execute("SELECT * FROM users WHERE sex = 'M'")
                 rows=cursor.fetchall()
@@ -58,7 +59,6 @@ def userHome():
 
         elif pref=='straight' and gender.lower()=='m':
             genderPref='Women' 
-           
             try:
                 cursor.execute("SELECT * FROM users WHERE sex = 'F'")
                 rows=cursor.fetchall()
@@ -102,9 +102,10 @@ def adduser():
             if len(rows) != 0:
                 #print "Email already in use"
                 return "Email already in use"
-
+            
             cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity)"
                            "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(username, email, password, height, sex, age, education, ethnicity,orientation))
+            rows=cursor.fetchall()
             db.commit()
             # print "Registered"
         except Exception as e:
