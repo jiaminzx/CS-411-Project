@@ -41,13 +41,13 @@ def handle_data():
 
 @app.route("/userHome",methods=['GET'])
 def userHome():
-    userID=1
+    userID=int(1)
     genderPref='M'
     if request.method == 'GET':
         rows=[]
-        pref=cursor.execute('SELECT orientation FROM users WHERE username=%d' % (userID))
+        pref=cursor.execute('SELECT orientation FROM users WHERE userID="%d"' % (userID),buffered=True)
         print(pref)
-        gender=cursor.execute('SELECT sex FROM users WHERE userID="%d"' % (userID))
+        gender=cursor.execute('SELECT sex FROM users WHERE userID="%d"' % (userID),buffered=True)
         print(gender)
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
