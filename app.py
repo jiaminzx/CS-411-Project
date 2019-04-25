@@ -5,10 +5,10 @@ from flask import Flask, render_template, json, jsonify, request
 import mysql.connector as mariadb
 
 #Use this line for cPanel
-# db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
+db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
 #Use this line for VM
 # db = mariadb.connect(user='root', password='password', database='cs411project')
-# cursor = db.cursor()
+cursor = db.cursor()
 
 
 #db.close() needs to be called to close connection
@@ -154,6 +154,6 @@ def showWomen():
     return render_template('showWomen.html', data=rows)
 
 # #comment out when hosting on cpanel
-if __name__ == "__main__":
+# if __name__ == "__main__":
 #     app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
-    app.run()
+    # app.run()
