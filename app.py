@@ -44,7 +44,9 @@ def userHome():
     userID=1
     if request.method == 'GET':
         pref=cursor.execute('SELECT orientation FROM users WHERE userID="%s"' % (userID))
+        print(pref)
         gender=cursor.execute('SELECT gender FROM users WHERE userID="%s"' % (userID))
+        print(gender)
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
            
@@ -153,6 +155,6 @@ def deluser():
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8084)
     #app.run()
 
