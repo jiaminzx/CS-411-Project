@@ -10,7 +10,7 @@ import mysql.connector as mariadb
 db = mariadb.connect(user='root', password='password', database='m2z2')
 #Use this line for VM
 # db = mariadb.connect(user='root', password='password', database='cs411project')
-cursor = db.cursor(buffered=True)
+cursor = db.cursor(prepared=True)
 
 #db.close() needs to be called to close connection
 
@@ -45,25 +45,27 @@ def userHome():
     genderPref='M'
     if request.method == 'GET':
         rows=[]
-        pref=cursor.execute('SELECT orientation FROM users WHERE userID="%d"' % (userID),buffered=True)
+        # sql_select_query = """select * from python_developers where id = %s"""
+        # cursor.execute(sql_select_query, (ID, ))
+        pref=cursor.execute('SELECT orientation FROM users WHERE userID=%d', (userID,))
         print(pref)
-        gender=cursor.execute('SELECT sex FROM users WHERE userID="%d"' % (userID),buffered=True)
+        gender=cursor.execute("SELECT sex FROM users WHERE userID=%d", (userID,))
         print(gender)
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
             try:
                 cursor.execute("SELECT * FROM users WHERE sex = 'M'")
                 rows=cursor.fetchall()
-            except Exception as e:
-                return(str(e))
+            except mysql.connector.Error as error:
+                print("Failed to get record from database: {}".format(error))
 
         elif pref=='straight' and gender.lower()=='m':
             genderPref='Women' 
             try:
                 cursor.execute("SELECT * FROM users WHERE sex = 'F'")
                 rows=cursor.fetchall()
-            except Exception as e:
-                return(str(e))
+            except mysql.connector.Error as error:
+                print("Failed to get record from database: {}".format(error))
     
     return render_template('userHome.html', data=rows, genderPreference=genderPref)     
 
@@ -93,7 +95,7 @@ def adduser():
                 #print "Email already in use"
                 return "Email already in use"
             
-            cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity)"
+            cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity,orientation)"
                            "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(username, email, password, height, sex, age, education, ethnicity,orientation))
             rows=cursor.fetchall()
             db.commit()
