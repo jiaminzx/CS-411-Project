@@ -29,9 +29,9 @@ def signUp():
 def modify():
     return render_template('signup.html')
 
-# @app.route('/showDelete')
-# def delete():
-#     return render_template('delete.html')
+@app.route('/showDelete')
+def delete():
+    return render_template('delete.html')
 
 @app.route('/showSignUp/handle_data', methods=['POST'])
 def handle_data():
@@ -45,7 +45,7 @@ def userHome():
     genderPref='M'
     if request.method == 'GET':
         rows=[]
-        pref=cursor.execute('SELECT orientation FROM users WHERE userID="%d"' % (userID))
+        pref=cursor.execute('SELECT orientation FROM users WHERE username=%d' % (userID))
         print(pref)
         gender=cursor.execute('SELECT sex FROM users WHERE userID="%d"' % (userID))
         print(gender)
@@ -67,17 +67,7 @@ def userHome():
     
     return render_template('userHome.html', data=rows, genderPreference=genderPref)     
 
-# @app.route("/showMen")
-# def showMen():
-    
 
-# @app.route("/showWomen",methods=['GET'])
-# def showWomen():
-#     if request.method == 'GET':
-        
-
-#    return render_template('showWomen.html', data=rows)
-# @app.route('/addU')
 @app.route('/showSignUp', methods=['POST'])
 def adduser():
     #print "adduser Entered"
