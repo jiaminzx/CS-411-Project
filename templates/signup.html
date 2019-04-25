@@ -17,10 +17,8 @@
       <div class="header">
         <nav>
           <ul class="nav nav-pills pull-right">
-            <li role="presentation" ><a href="/">Home</a> |</li>
-            
-            <li role="presentation" class="active"><a href="#">Sign Up | </a></li>
-            
+            <li role="presentation" ><a href="/"> Home </a> |</li>
+            <li role="presentation" class="active"><a href="#"> Sign Up | </a></li>
           </ul>
           
         </nav>
@@ -31,13 +29,13 @@
         <h1>Fill out your information below:</h1>
         <form action="{{ url_for('adduser') }}" method="post">
           <label for="inputName" class="sr-only">Name</label>
-          <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Username" required autofocus>
+          <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Username" required="required" autofocus>
           <label for="inputEmail" class="sr-only">Name</label>
-          <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
+          <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email" required="required" autofocus>
           <label for="inputPassword" class="sr-only">Password</label>
-          <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
+          <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required="required">
           <label for="inputHeight" class="sr-only">Height(inches)</label>
-          <input type="number" name="inputHeight" id="inputHeight" class="form-control" placeholder="Height" required>
+          <input type="number" name="inputHeight" id="inputHeight" class="form-control" placeholder="Height" required="required">
 
           <label for="inputGender" class="sr-only">Gender</label>
           <input type="name" name="inputGender" id="inputGender" class="form-control" placeholder="Gender" required autofocus>
@@ -49,10 +47,10 @@
           <input type="ethnicity" name="inputEthnicity" id="inputEthnicity" class="form-control" placeholder="Ethnicity" required>   
          
             <select class="form-control" id="orientation" name="orientation">
-                <option>straight</option>
-                <option>bi-sexual</option>
-                <option selected>no preference</option>
-                <option>gay</option>
+                <option value="straight">straight</option>
+                <option value="bi-sexual">bi-sexual</option>
+                <option value="pansexual" selected>no preference</option>
+                <option value="gay">gay</option>
             </select>
         
           <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
