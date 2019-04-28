@@ -70,15 +70,15 @@ def adduser():
 def signIn():
     return render_template('signIn.html')
 
-@app.route('/get_profile', methods = ['GET'])
+@app.route('/get_profile', methods = ['POST'])
 def get_profile():
-    if request.method == 'GET':
+    if request.method == 'POST':
         try:
-            password = request.form['inputPassword']
-            email = request.form['inputEmail']
+            password = request.form["inputPassword"]
+            email = request.form["inputEmail"]
             cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
             row=cursor.fetchall()
-            assert len(row) == 1, "Multiple profiles with same email"
+            # assert len(row) == 1, "Multiple profiles with same email"
         except Exception as e:
           return(str(e))
 
