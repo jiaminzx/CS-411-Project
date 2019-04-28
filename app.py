@@ -70,7 +70,7 @@ def adduser():
 def signIn():
     return render_template('signIn.html')
 
-@app.route('/get_profile', methods = ['GET'])
+@app.route('/get_profile', methods = ['POST'])
 def get_profile():
     if request.method == 'GET':
         try:
