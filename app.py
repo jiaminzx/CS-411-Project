@@ -78,7 +78,7 @@ def get_profile():
             email = request.form["inputEmail"]
             cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
             row=cursor.fetchall()
-            # assert len(row) == 1, "Multiple profiles with same email"
+            assert len(row) == 1, "Multiple profiles with same email"
         except Exception as e:
           return(str(e))
 
