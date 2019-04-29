@@ -7,10 +7,10 @@ import re
 import mysql.connector as mariadb
 
 #Use this line for cPanel
-# db = mariadb.connect(user='root', password='password', database='m2z2')
+db = mariadb.connect(user='root', password='password', database='m2z2')
 #Use this line for VM
 # db = mariadb.connect(user='root', password='password', database='cs411project')
-# cursor = db.cursor(cursor_class=MySQLCursorPrepared)
+cursor = db.cursor(cursor_class=MySQLCursorPrepared)
 
 #db.close() needs to be called to close connection
 
@@ -163,6 +163,6 @@ def deluser():
 
 
 # #comment out when hosting on cpanel
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
-    app.run()
+    # app.run()
