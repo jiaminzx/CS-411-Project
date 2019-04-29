@@ -11,31 +11,26 @@
         
       </head>
    <body>
-         <a href = "/">Go back to home page</a>
          
-          <form action="{{ url_for('showMen') }}" method="get">
-          <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Show Men</button>
-          </form>
+         <ul class="nav nav-pills pull-right">
+            <li role="presentation" ><a href="/"> Home </a> |</li>
+            <li role="presentation" class="active"><a href="#"> View Your Profile </a> | </li>
+            <li role="presentation" ><a href="showDelete"> Delete Account </a></li>
+            
+          </ul>
 
-          <form action="{{ url_for('showWomen') }}" method="get">
-          <button id="btnSignUp2" class="btn btn-lg btn-primary btn-block" type="submit">Show Women</button>
-          </form>
-    
-      <h1>Men</h1>
+        <h2>genderPreference</h2>
+
          <table border="1" cellpadding="5" cellspacing="5">
                <tbody>
                {% for item in data %}
                <tr>
-
-
                   
                    <!-- change the form contents to match database -->
                    <td>Name: {{item[0]}}</td>
                     <td>Email: {{item[1]}}</td>
                     <td>Height: {{item[3]}}</td>
                     <td>Sex: {{item[4]}}</td>
-
-
 
                </tr>
                {% endfor %}
