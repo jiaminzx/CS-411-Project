@@ -10,9 +10,9 @@ import mysql.connector as mariadb
 db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
 #Use this line for VM
 # db = mariadb.connect(user='root', password='password', database='m2z2')
-cursor = db.cursor(cursor_class=MySQLCursorPrepared)
+# cursor = db.cursor(cursor_class=MySQLCursorPrepared)
 
-# cursor = db.cursor()
+cursor = db.cursor()
 
 #db.close() needs to be called to close connection
 
