@@ -1,7 +1,7 @@
 
-
 from flask import Flask, render_template, json, jsonify, request
-from flask import flash, redirect, session, abort
+from flask import flash, redirect, session, abort,url_for
+from flask_login import LoginManager , login_required , UserMixin , login_user
 import re
 #import MySQL
 import mysql.connector as mariadb
@@ -16,7 +16,49 @@ cursor = db.cursor(buffered= True)
 
 app = Flask(__name__)
 application = app # our hosting requires application in passenger_wsgi
+app.config['SECRET_KEY'] = 'secret_key'
+login_manager = LoginManager()
+login_manager.login_view = "login"
+login_manager.init_app(app)
 
+class User(UserMixin):
+    def __init__(self , username , password , id , active=True):
+        self.id = id
+        self.username = username
+        self.password = password
+        self.active = active
+
+    def get_id(self):
+        return self.id
+
+    def is_active(self):
+        return self.active
+
+    def get_auth_token(self):
+        return make_secure_token(self.username , key='secret_key')
+
+class UsersRepository:
+
+    def __init__(self):
+        self.users = dict()
+        self.users_id_dict = dict()
+        self.identifier = 0
+    
+    def save_user(self, user):
+        self.users_id_dict.setdefault(user.id, user)
+        self.users.setdefault(user.username, user)
+    
+    def get_user(self, username):
+        return self.users.get(username)
+    
+    def get_user_by_id(self, userid):
+        return self.users_id_dict.get(userid)
+    
+    def next_index(self):
+        self.identifier +=1
+        return self.identifier
+
+users_repository = UsersRepository()
 # class User:
 #     def __init__(self, userID):
 #         self.userID=userID
@@ -33,10 +75,43 @@ def main():
 def signUp():
     return render_template('signup.html')
 
-@app.route('/SignIn')
-def modify():
-    return render_template('signup.html')
+# @app.route('/SignIn')
+# def modify():
+#     return render_template('signIn.html')
 
+@app.route('/SignIn' , methods=['GET', 'POST'])
+def login():
+    error=''
+    if request.method == 'POST':
+        try:
+            cursor = db.cursor(buffered= True)
+            username = request.form['inputName']
+            password = request.form['inputPassword']
+            spq = """SELECT userID FROM users WHERE name = %s AND password=%s"""
+            cursor.execute(spq, [str(username),str(password)])
+            userID=cursor.fetchall()
+
+            print(userID)   
+            userID=re.sub(r'[^\w\s]','',str(userID))
+            userID=userID[1:]
+            print(userID)
+            new_user = User(username , password , userID)
+            users_repository.save_user(new_user)
+
+            registeredUser = users_repository.get_user(username)
+            # print('Users '+ str(users_repository.users))
+            # print('Register user %s , password %s' % (registeredUser.username, registeredUser.password))
+            if len(userID)!=0:
+                print('Logged in..')
+                login_user(registeredUser)
+                return redirect(url_for('userHome'))
+            else:
+                error="invalid username or pass"
+        except Exception as e:
+            return(str(e))
+    return render_template('signIn.html',error=error)
+   
+    
 @app.route('/showDelete')
 def delete():
     return render_template('delete.html')
@@ -47,13 +122,14 @@ def handle_data():
     if request.method == 'POST':
         projectpath = request.form['projectFilepath']
 
-@app.route("/userHome",methods=['GET'])
+@app.route("/userHome",methods=['GET','POST'])
 def userHome():
-    userID=int(1)
+    userID=int(1) #HARDCODE USER ID
     if request.method == 'GET':
         rows=[]
         cursor = db.cursor()
 
+        #use of prepared statment
         spq = """SELECT orientation FROM users WHERE userID= %s"""
         cursor.execute(spq, [str(userID)])
         pref=cursor.fetchall()
@@ -81,8 +157,9 @@ def userHome():
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
+        return render_template('userHome.html', data=rows)
     
-    return render_template('userHome.html', data=rows)     
+    return render_template('userHome.html')     
 
 
 @app.route('/showSignUp', methods=['POST'])
@@ -103,7 +180,7 @@ def adduser():
             
             if age<18:
                 return "You must be above 18"
-                
+
             cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
             rows=cursor.fetchall()
             if len(rows) != 0:
@@ -158,6 +235,15 @@ def deluser():
     return render_template('delete.html')
 
 
+# handle login failed
+@app.errorhandler(401)
+def page_not_found(e):
+    return Response('<p>Login failed</p>')
+
+# callback to reload the user object        
+@login_manager.user_loader
+def load_user(userid):
+    return users_repository.get_user_by_id(userid)
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
