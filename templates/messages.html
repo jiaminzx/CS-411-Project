@@ -13,10 +13,27 @@
    <body>
          <a href = "/">Go back</a>
 
-          <form action="{{ url_for('showMen') }}" method="get">
-          <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Show Men</button>
+          <form action="{{ url_for('showMessage') }}" method="get">
+          <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Show Message</button>
           </form>
 
+          <div class="jumbotron">
+            <h1>Fill out your information below:</h1>
+            <form action="{{ url_for('addMessage') }}" method="post">
+
+              <label for="sender_id" class="sr-only">Sender</label>
+              <input type="name" name="sender_id" id="sender_id" class="form-control" placeholder="Sender" required autofocus>
+
+              <label for="recipient_id" class="sr-only">Recipient</label>
+              <input type="name" name="recipient_id" id="recipient_id " class="form-control" placeholder="recipient" required autofocus>
+
+              <label for="text" class="sr-only">Password</label>
+              <input type="name" name="text" id="text" class="form-control" placeholder="Message" required>
+
+              <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Send Message</button>
+            </form>
+
+          </div>
       <!-- <h1>Men</h1>
          <table border="1" cellpadding="5" cellspacing="5">
                <tbody>
