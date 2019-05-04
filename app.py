@@ -113,7 +113,6 @@ def deluser():
 
 @app.route("/showUsers")
 def showUsers():
-
     return render_template('showUser.html')
 
 @app.route("/showMen",methods=['GET'])
@@ -121,7 +120,7 @@ def showMen():
     if request.method == 'GET':
         try:
             #CHANGE QUERY TO MATCH DATABASE
-            cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+            cursor.execute("SELECT * FROM messages_tbl WHERE message_id = '1'")
             rows=cursor.fetchall()
         except Exception as e:
           return(str(e))
