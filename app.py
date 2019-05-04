@@ -119,7 +119,12 @@ def login():
             return(str(e))
     return render_template('signIn.html',error=error)
    
-    
+@app.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('Login', None)
+    return redirect(url_for('main'))
+
 @app.route('/showDelete')
 def delete():
     return render_template('delete.html')
@@ -135,7 +140,8 @@ def handle_data():
 def userHome():
     
     userID = request.cookies.get('Login')
-    print("user ins essions:" +str(userID))
+    print("user in session:" +str(userID))
+
     if request.method == 'GET':
         rows=[]
         cursor = db.cursor()
