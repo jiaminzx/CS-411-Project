@@ -79,6 +79,8 @@ def signUp():
 # def modify():
 #     return render_template('signIn.html')
 
+
+
 @app.route('/SignIn' , methods=['GET', 'POST'])
 def login():
     error=''
@@ -123,6 +125,7 @@ def handle_data():
         projectpath = request.form['projectFilepath']
 
 @app.route("/userHome",methods=['GET','POST'])
+@login_required
 def userHome():
     userID=int(1) #HARDCODE USER ID
     if request.method == 'GET':
