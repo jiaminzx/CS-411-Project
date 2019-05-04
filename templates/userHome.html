@@ -16,11 +16,14 @@
             
             <li role="presentation" class="active"><a href="#"> View Your Profile </a> | </li>
             <li role="presentation" ><a href="showDelete"> Delete Account </a> | </li>
-            <li role="presentation" ><a href="showModify"> Edit Profile </a></li>
-            <li role="presentation" ><a href="logout"> Logout </a> |</li>
+            <li role="presentation" ><a href="showModify"> Edit Profile </a>|</li>
+            <li role="presentation" ><a href="logout"> Logout </a></li>
             
           </ul>
-
+        
+          {% if current_user.is_authenticated %}
+            Hi {{ name }}!
+          {% endif %}
         <h2>Your matches shown below</h2>
 
          <table border="1" cellpadding="5" cellspacing="5">
