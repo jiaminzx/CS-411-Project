@@ -39,13 +39,19 @@
           <label for="inputHeight" class="sr-only">Height(inches)</label>
           <input type="number" name="inputHeight" id="inputHeight" class="form-control" placeholder="Height" required>
           <label for="inputGender" class="sr-only">Gender</label>
-          <input type="name" name="inputGender" id="inputGender" class="form-control" placeholder="Gender" required autofocus>          
+          <input type="name" name="inputGender" id="inputGender" class="form-control" placeholder="Gender" required autofocus>
           <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
         </form>
 
       </div>
 
-
+      {% with messages = get_flashed_messages() %}
+         {% if messages %}
+           {% for message in messages %}
+             <h3 class="text-muted">{{ message }}</h3>
+            {% endfor %}
+         {% endif %}
+       {% endwith %}
 
       <footer class="footer">
         <p>&copy; Company 2019</p>

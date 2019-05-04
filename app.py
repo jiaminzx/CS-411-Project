@@ -1,6 +1,9 @@
 
 
-from flask import Flask, render_template, json, jsonify, request
+from flask import Flask, render_template, json, jsonify, request, abort, redirect, Response, url_for, flash
+
+# from flask.ext.login import LoginManager
+from flask_login import LoginManager, login_required , UserMixin , login_user
 #import MySQL
 import mysql.connector as mariadb
 
@@ -9,12 +12,78 @@ import mysql.connector as mariadb
 #Use this line for VM
 db = mariadb.connect(user='root', password='password', database='cs411project')
 cursor = db.cursor()
-
-
 #db.close() needs to be called to close connection
+
+class User(UserMixin):
+    def __init__(self , username , password , id , active=True):
+        self.id = id
+        self.username = username
+        self.password = password
+        self.active = active
+
+    def get_id(self):
+        return self.id
+
+    def is_active(self):
+        return self.active
+
+    def get_auth_token(self):
+        return make_secure_token(self.username , key='secret_key')
+
+class UsersRepository:
+
+    def __init__(self):
+        self.users = dict()
+        self.users_id_dict = dict()
+        self.identifier = 0
+
+    def save_user(self, user):
+        self.users_id_dict.setdefault(user.id, user)
+        self.users.setdefault(user.username, user)
+
+    def get_user(self, username):
+        return self.users.get(username)
+
+    def get_user_by_id(self, userid):
+        return self.users_id_dict.get(userid)
+
+    def next_index(self):
+        self.identifier +=1
+        return self.identifier
+
+users_repository = UsersRepository()
 
 app = Flask(__name__)
 application = app # our hosting requires application in passenger_wsgi
+app.config['SECRET_KEY'] = 'secret_key'
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # Here we use a class of some kind to represent and validate our
+    # client-side form data. For example, WTForms is a library that will
+    # handle this for us, and we use a custom LoginForm to validate.
+    form = LoginForm()
+    if form.validate_on_submit():
+        # Login and validate the user.
+        # user should be an instance of your `User` class
+        login_user(user)
+
+        flask.flash('Logged in successfully.')
+
+        next = flask.request.args.get('next')
+        # is_safe_url should check if the url is safe for redirects.
+        # See http://flask.pocoo.org/snippets/62/ for an example.
+        if not is_safe_url(next):
+            return flask.abort(400)
+
+        return flask.redirect(next or flask.url_for('index'))
+    return flask.render_template('login.html', form=form)
 
 @app.route("/")
 def main():
@@ -62,7 +131,8 @@ def adduser():
             rows=cursor.fetchall()
             if len(rows) != 0:
                 #print "Email already in use"
-                return "Email already in use"
+                flash('Email already in use. Sign up with a different email')
+                return render_template('signup.html')
 
             cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex) VALUES (%s,%s, %s, %s, %s)",(username, email, password, height, sex))
             db.commit()
@@ -111,9 +181,23 @@ def deluser():
           return(str(e))
     return render_template('delete.html')
 
+@app.route("/showSignIn",methods=['POST'])
+def showSignIn():
+
+
+    if request.method == 'POST':
+        try:
+            email = request.form['inputEmail']
+            password = request.form['inputPassword']
+            cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+            rows=cursor.fetchall()
+        except Exception as e:
+          return(str(e))
+
+    return render_template('showSignIn.html')
+
 @app.route("/showUsers")
 def showUsers():
-
     return render_template('showUser.html')
 
 @app.route("/showMen",methods=['GET'])
