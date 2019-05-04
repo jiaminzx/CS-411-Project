@@ -15,11 +15,12 @@
          <ul class="nav nav-pills pull-right">
             <li role="presentation" ><a href="/"> Home </a> |</li>
             <li role="presentation" class="active"><a href="#"> View Your Profile </a> | </li>
-            <li role="presentation" ><a href="showDelete"> Delete Account </a></li>
+            <li role="presentation" ><a href="showDelete"> Delete Account </a> | </li>
+            <li role="presentation" ><a href="showModify"> Edit Profile </a></li>
             
           </ul>
 
-        <h2>genderPreference</h2>
+        <h2>Your matches shown below</h2>
 
          <table border="1" cellpadding="5" cellspacing="5">
                <tbody>
@@ -27,7 +28,7 @@
                <tr>
                   
                    <!-- change the form contents to match database -->
-                   <td>Name: {{item[0]}}</td>
+                   <td>Name: {{item['username']}}</td>
                     <td>Email: {{item[1]}}</td>
                     <td>Height: {{item[3]}}</td>
                     <td>Sex: {{item[4]}}</td>

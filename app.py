@@ -7,15 +7,23 @@ import re
 import mysql.connector as mariadb
 
 #Use this line for cPanel
-db = mariadb.connect(user='root', password='password', database='m2z2')
+# db = mariadb.connect(user='root', password='password', database='m2z2')
 #Use this line for VM
-# db = mariadb.connect(user='root', password='password', database='cs411project')
-cursor = db.cursor(cursor_class=MySQLCursorPrepared)
+db = mariadb.connect(user='user', password='password',database='m2z2')
+cursor = db.cursor(buffered= True)
 
 #db.close() needs to be called to close connection
 
 app = Flask(__name__)
 application = app # our hosting requires application in passenger_wsgi
+
+# class User:
+#     def __init__(self, userID):
+#         self.userID=userID
+#     def setID(self, userID):
+#         self.userID=userID
+#     def getID(self):
+#         return self.userID
 
 @app.route("/")
 def main():
@@ -42,14 +50,22 @@ def handle_data():
 @app.route("/userHome",methods=['GET'])
 def userHome():
     userID=int(1)
-    genderPref='M'
     if request.method == 'GET':
         rows=[]
-        spq = """SELECT orientation FROM users WHERE userID="%d""""
-        pref=cursor.execute(spq, (userID))
-        print(pref)
-        gender=cursor.execute('SELECT sex FROM users WHERE userID="%d"' % (userID))
-        print(gender)
+        cursor = db.cursor()
+
+        spq = """SELECT orientation FROM users WHERE userID= %s"""
+        cursor.execute(spq, [str(userID)])
+        pref=cursor.fetchall()
+        pref=re.sub(r'[^\w\s]','',str(pref))
+        pref=pref[1:]
+       
+        spq="""SELECT sex FROM users WHERE userID= %s"""
+        cursor.execute(spq, [str(userID)])
+        gender=cursor.fetchall()
+        gender=re.sub(r'[^\w\s]','',str(gender))
+        gender=gender[1:]
+       
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
             try:
@@ -66,7 +82,7 @@ def userHome():
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
     
-    return render_template('userHome.html', data=rows, genderPreference=genderPref)     
+    return render_template('userHome.html', data=rows)     
 
 
 @app.route('/showSignUp', methods=['POST'])
@@ -78,20 +94,19 @@ def adduser():
             username = request.form['inputName']
             password = request.form['inputPassword']
             email = request.form['inputEmail']
-            height =  request.form['inputHeight']
+            height = request.form['inputHeight']
             sex = request.form['inputGender']
             age = request.form['inputAge']
+            education = request.form['inputEducation']
+            ethnicity = request.form['inputEthnicity']
+            orientation = request.form['orientation']
             cursor.execute('SELECT * FROM users WHERE age="%s"' % (age))
             rows=cursor.fetchall()
             if len(rows) != 0:
                 return "You must be above 18"
-            education = request.form['inputEducation']
-            ethnicity = request.form['inputEthnicity']
-            orientation = request.form['orientation']
             cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
             rows=cursor.fetchall()
             if len(rows) != 0:
-                #print "Email already in use"
                 return "Email already in use"
             
             cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity,orientation)"
@@ -146,6 +161,6 @@ def deluser():
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8084)
-    #app.run()
+    #app.run(host='sp19-cs411-36.cs.illinois.edu', port=8084)
+    app.run()
 
