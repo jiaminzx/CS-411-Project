@@ -100,10 +100,10 @@ def adduser():
             education = request.form['inputEducation']
             ethnicity = request.form['inputEthnicity']
             orientation = request.form['orientation']
-            cursor.execute('SELECT * FROM users WHERE age="%s"' % (age))
-            rows=cursor.fetchall()
-            if len(rows) != 0:
+            
+            if age<18:
                 return "You must be above 18"
+                
             cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
             rows=cursor.fetchall()
             if len(rows) != 0:
