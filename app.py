@@ -138,17 +138,17 @@ def deluser():
 def showUsers():
     return render_template('showUser.html')
 
-@app.route("/showMen",methods=['GET'])
-def showMen():
-    if request.method == 'GET':
-        try:
-            #CHANGE QUERY TO MATCH DATABASE
-            cursor.execute("SELECT * FROM messages_tbl WHERE sender_id = '4' OR sender_id = '3' ORDER BY time")
-            rows=cursor.fetchall()
-        except Exception as e:
-          return(str(e))
-
-    return render_template('showMen.html', data=rows)
+# @app.route("/showMen",methods=['GET'])
+# def showMen():
+#     if request.method == 'GET':
+#         try:
+#             #CHANGE QUERY TO MATCH DATABASE
+#             cursor.execute("SELECT * FROM messages_tbl WHERE sender_id = '4' OR sender_id = '3' ORDER BY time")
+#             rows=cursor.fetchall()
+#         except Exception as e:
+#           return(str(e))
+#
+#     return render_template('showMen.html', data=rows)
 
 @app.route("/showWomen",methods=['GET'])
 def showWomen():
