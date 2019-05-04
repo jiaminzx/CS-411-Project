@@ -120,7 +120,7 @@ def showMen():
     if request.method == 'GET':
         try:
             #CHANGE QUERY TO MATCH DATABASE
-            cursor.execute("SELECT * FROM messages_tbl WHERE sender_id = '1' OR sender_id = '3'")
+            cursor.execute("SELECT * FROM messages_tbl WHERE sender_id = '4' OR sender_id = '3'")
             rows=cursor.fetchall()
         except Exception as e:
           return(str(e))
