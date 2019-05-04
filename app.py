@@ -37,8 +37,8 @@ def delete():
 def showMessage():
     return render_template('messages.html')
 
-@app.route("/showMen",methods=['GET'])
-def showMen():
+@app.route("/showMsg",methods=['GET'])
+def showMsg():
     if request.method == 'GET':
         try:
             #CHANGE QUERY TO MATCH DATABASE
@@ -47,7 +47,7 @@ def showMen():
         except Exception as e:
           return(str(e))
 
-    return render_template('showMen.html', data=rows)
+    return render_template('showMsg.html', data=rows)
 
 @app.route('/showMessage', methods=['POST'])
 def addMessage():
