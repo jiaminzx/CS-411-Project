@@ -42,7 +42,7 @@ def showMsg():
     if request.method == 'GET':
         try:
             #CHANGE QUERY TO MATCH DATABASE
-            cursor.execute("SELECT * FROM messages_tbl WHERE sender_id = '4' OR sender_id = '3' ORDER BY time")
+            cursor.execute("SELECT * FROM messages_tbl WHERE sender_id = %s OR sender_id = %s ORDER BY time", (sender,recipient))
             rows=cursor.fetchall()
         except Exception as e:
           return(str(e))
@@ -53,6 +53,7 @@ def showMsg():
 def addMessage():
     if request.method == 'POST':
         try:
+            global sender, recipient
             sender = request.form['sender_id']
             recipient = request.form['recipient_id']
             msg = request.form['text']
