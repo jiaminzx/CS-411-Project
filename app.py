@@ -166,7 +166,29 @@ def deluser():
           return(str(e))
     return render_template('delete.html')
 
+@app.route("/showMen",methods=['GET'])
+def showMen():
+    if request.method == 'GET':
+        try:
+            #CHANGE QUERY TO MATCH DATABASE
+            cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+            rows=cursor.fetchall()
+        except Exception as e:
+          return(str(e))
 
+    return render_template('showMen.html', data=rows)
+
+@app.route("/showWomen",methods=['GET'])
+def showWomen():
+    if request.method == 'GET':
+        try:
+            #CHANGE QUERE TO MATCH DATABASE
+            cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+            rows=cursor.fetchall()
+        except Exception as e:
+          return(str(e))
+
+    return render_template('showWomen.html', data=rows)
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
