@@ -1,6 +1,6 @@
 
 from flask import Flask, render_template, json, jsonify, request
-from flask import flash, redirect, session, abort,url_for,make_response
+from flask import flash, redirect, session, abort,url_for, make_response
 from flask_login import LoginManager , login_required , UserMixin , login_user
 import re
 #import MySQL
@@ -13,7 +13,6 @@ db = mariadb.connect(user='user', password='password',database='m2z2')
 cursor = db.cursor(buffered= True)
 
 #db.close() needs to be called to close connection
-
 app = Flask(__name__)
 application = app # our hosting requires application in passenger_wsgi
 app.config['SECRET_KEY'] = 'secret_key'
@@ -59,13 +58,7 @@ class UsersRepository:
         return self.identifier
 
 users_repository = UsersRepository()
-# class User:
-#     def __init__(self, userID):
-#         self.userID=userID
-#     def setID(self, userID):
-#         self.userID=userID
-#     def getID(self):
-#         return self.userID
+
 
 @app.route("/")
 def main():
@@ -74,12 +67,6 @@ def main():
 @app.route('/showSignUp')
 def signUp():
     return render_template('signup.html')
-
-# @app.route('/SignIn')
-# def modify():
-#     return render_template('signIn.html')
-
-
 
 @app.route('/SignIn' , methods=['GET', 'POST'])
 def login():
@@ -141,7 +128,9 @@ def userHome():
     
     userID = request.cookies.get('Login')
     print("user in session:" +str(userID))
-
+    registeredUser = users_repository.get_user_by_id(userID)
+    name=registeredUser.username
+    print(name)
     if request.method == 'GET':
         rows=[]
         cursor = db.cursor()
@@ -174,9 +163,9 @@ def userHome():
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
-        return render_template('userHome.html', data=rows)
+        return render_template('userHome.html', data=rows,name=name)
     
-    return render_template('userHome.html')     
+    return render_template('userHome.html',name=name)     
 
 
 @app.route('/showSignUp', methods=['POST'])
