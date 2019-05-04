@@ -142,5 +142,5 @@ def showWomen():
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8082)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
     # app.run()
