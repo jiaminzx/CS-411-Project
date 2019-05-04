@@ -34,7 +34,7 @@ def delete():
     return render_template('delete.html')
 
 @app.route('/showMessage')
-def messages():
+def showMessage():
     return render_template('messages.html')
 
 @app.route("/showMen",methods=['GET'])
