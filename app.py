@@ -1,6 +1,6 @@
 
 from flask import Flask, render_template, json, jsonify, request
-from flask import flash, redirect, session, abort,url_for
+from flask import flash, redirect, session, abort,url_for,make_response
 from flask_login import LoginManager , login_required , UserMixin , login_user
 import re
 #import MySQL
@@ -95,20 +95,26 @@ def login():
 
             print(userID)   
             userID=re.sub(r'[^\w\s]','',str(userID))
-            userID=userID[1:]
-            print(userID)
+            
+            # print(userID)
             new_user = User(username , password , userID)
             users_repository.save_user(new_user)
 
             registeredUser = users_repository.get_user(username)
             # print('Users '+ str(users_repository.users))
             # print('Register user %s , password %s' % (registeredUser.username, registeredUser.password))
-            if len(userID)!=0:
-                print('Logged in..')
-                login_user(registeredUser)
-                return redirect(url_for('userHome'))
-            else:
+            if not userID:
                 error="invalid username or pass"
+                
+                # return redirect(url_for('userHome'))
+            else:
+                print('Logged in..')
+                #registeredUser=str(registeredUser)
+                #session['user'] = userID
+                resp = redirect(url_for("userHome"))
+                resp.set_cookie('Login',registeredUser.id)
+                login_user(registeredUser)
+                return resp
         except Exception as e:
             return(str(e))
     return render_template('signIn.html',error=error)
@@ -127,7 +133,9 @@ def handle_data():
 @app.route("/userHome",methods=['GET','POST'])
 @login_required
 def userHome():
-    userID=int(1) #HARDCODE USER ID
+    
+    userID = request.cookies.get('Login')
+    print("user ins essions:" +str(userID))
     if request.method == 'GET':
         rows=[]
         cursor = db.cursor()
@@ -241,7 +249,7 @@ def deluser():
 # handle login failed
 @app.errorhandler(401)
 def page_not_found(e):
-    return Response('<p>Login failed</p>')
+    return flask.Response('<p>Login failed</p>')
 
 # callback to reload the user object        
 @login_manager.user_loader
