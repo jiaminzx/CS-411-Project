@@ -51,6 +51,7 @@ def showMen():
 
 @app.route('/showMessage', methods=['POST'])
 def addMessage():
+
     if request.method == 'POST':
         try:
             sender = request.form['sender_id']
@@ -58,7 +59,7 @@ def addMessage():
             msg = request.form['text']
             cursor.execute("INSERT LOW_PRIORITY INTO  messages_tbl (sender_id, recipient_id, text) VALUES (%s,%s, %s)",(sender,recipient,msg))
             db.commit()
-    return render_template('messages.html')
+return render_template('messages.html')
 
 # @app.route('/showSignUp/handle_data', methods=['POST'])
 # def handle_data():
