@@ -27,6 +27,10 @@ def main():
 def signUp():
     return render_template('signup.html')
 
+@app.route('/showMessages')
+def messages():
+    return render_template('messages.html')
+
 @app.route('/SignIn')
 def modify():
     return render_template('signup.html')
