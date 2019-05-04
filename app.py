@@ -58,7 +58,9 @@ def addMessage():
             msg = request.form['text']
             cursor.execute("INSERT LOW_PRIORITY INTO  messages_tbl (sender_id, recipient_id, text) VALUES (%s,%s, %s)",(sender,recipient,msg))
             db.commit()
-            return render_template('messages.html')
+        except Exception as e:
+          return(str(e))
+    return render_template('messages.html')
 
 # @app.route('/showSignUp/handle_data', methods=['POST'])
 # def handle_data():
