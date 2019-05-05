@@ -44,7 +44,7 @@ class UsersRepository:
         self.users_id_dict.pop(userID)
 
 def getName(registeredUser, cursor):
-        cursor.execute('SELECT name FROM users WHERE email="%s"' % (registeredUser.email))
+        cursor.execute('SELECT name FROM TABLE4 WHERE email="%s"' % (registeredUser.email))
         names=cursor.fetchall() #should only retrieve one value
         names=re.sub(r'[^\w\s]','',str(names))
         name=names[1:]
@@ -52,13 +52,13 @@ def getName(registeredUser, cursor):
 
 def getPrefandGen(userID, cursor):
         #use of prepared statment
-        spq = """SELECT orientation FROM users WHERE userID= %s"""
+        spq = """SELECT orientation FROM TABLE4 WHERE id= %s"""
         cursor.execute(spq, [str(userID)])
         pref=cursor.fetchall()
         pref=re.sub(r'[^\w\s]','',str(pref))
         pref=pref[1:]
 
-        spq="""SELECT sex FROM users WHERE userID= %s"""
+        spq="""SELECT sex FROM TABLE4 WHERE id= %s"""
         cursor.execute(spq, [str(userID)])
         gender=cursor.fetchall()
         gender=re.sub(r'[^\w\s]','',str(gender))
@@ -109,7 +109,7 @@ def login():
             cursor = db.cursor(buffered= True)
             email = request.form['inputEmail']
             password = request.form['inputPassword']
-            spq = """SELECT userID FROM users WHERE email = %s AND password=%s"""
+            spq = """SELECT id FROM TABLE4 WHERE email = %s AND password=%s"""
             cursor.execute(spq, [str(email),str(password)])
             userID=cursor.fetchall()
 
@@ -157,7 +157,7 @@ def userHome():
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
             try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+                cursor.execute("SELECT * FROM TABLE4 WHERE sex = 'M'")
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
@@ -165,7 +165,7 @@ def userHome():
         elif pref=='straight' and gender.lower()=='m':
             genderPref='Women'
             try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+                cursor.execute("SELECT * FROM TABLE4 WHERE sex = 'F'")
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
@@ -262,7 +262,7 @@ def moduser():
                 return render_template('modify.html', error="Cannot change heigt to go below 18")
 
             print(name, email, password, height, sex, age, education, ethnicity,orientation)
-            cursor.execute('UPDATE LOW_PRIORITY users SET name="%s", password="%s", height="%s", sex="%s", age="%s", education="%s", ethnicity="%s", orientation="%s" WHERE email="%s"' \
+            cursor.execute('UPDATE LOW_PRIORITY TABLE4 SET name="%s", password="%s", height="%s", sex="%s", age="%s", education="%s", ethnicity="%s", orientation="%s" WHERE email="%s"' \
              % (name, password, height, sex, age, education, ethnicity, orientation, email))
 
             # cursor.execute('UPDATE LOW_PRIORITY users SET name="%s", height="%s",sex="%s" WHERE email="%s"' % (username, height, sex, email))
@@ -282,7 +282,7 @@ def deluser():
     registeredUser = users_repository.get_user_by_id(userID)
     try:
         #will need to add deletes to all other tables too
-        cursor.execute('DELETE FROM users WHERE email="%s"' % (registeredUser.email))
+        cursor.execute('DELETE FROM TABLE4 WHERE email="%s"' % (registeredUser.email))
         db.commit()
     except Exception as e:
       return(str(e))
