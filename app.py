@@ -267,7 +267,7 @@ def showMatches():
                 # cursor.execute("SELECT * FROM users AS match_profiles WHERE userID IN (SELECT * FROM matches)")
                 # rows=cursor.fetchall()
 
-                matches_query = "select YT1.prospecting_id from yeses_tbl as YT1 where YT1.viewed__id = {} and YT1.prospecting_id IN (select YT2.viewed__id from yeses_tbl as YT2 where YT2.prospecting_id = {})".format(userID)
+                matches_query = "select YT1.prospecting_id from yeses_tbl as YT1 where YT1.viewed__id = {} and YT1.prospecting_id IN (select YT2.viewed__id from yeses_tbl as YT2 where YT2.prospecting_id = {})".format(userID, userID)
                 # matches_view = "CREATE VIEW match_ids AS {}"
                 cursor.execute("SELECT * from users WHERE userID IN ".format(matches_query))
                 rows = cursor.fetchall()
