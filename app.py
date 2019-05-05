@@ -317,8 +317,8 @@ def show_user_queue():
                 rows=cursor.fetchall()
 
                 # insert into yeses_tbl
-                # decision = request.form["value"]
-                decision = request.data
+                decision = request.form["decision"]
+                # decision = request.data
                 print(decision)
                 # if decision == "yes":
                 cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
@@ -335,8 +335,7 @@ def show_user_queue():
                 rows=cursor.fetchall()
 
                 # insert into yeses_tbl
-                decision = request.form["value"]
-                # decision = request.data
+                decision = request.form["decision"]
                 print(decision)
                 # print("able to access value in form")
                 # if decision == "yes
