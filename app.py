@@ -251,11 +251,14 @@ def showMatches():
             genderPref='Men'
             try:
                 ptsoy_query = "SELECT prospecting_id FROM yeses_tbl WHERE viewed__id = {}".format(userID)
-                pyso_query = "SELECT viewed__id FROM yeses_tbl WHERE prospecting_id = {}".format(userID)
-                matches_query = "{} INTERSECT {}".format(ptsoy_query, pyso_query)
+                pyso_query = "SELECT viewed__id AS FROM yeses_tbl WHERE prospecting_id = {}".format(userID)
+                # matches_query = "{} INTERSECT {}".format(ptsoy_query, pyso_query)
+                ptsoy_pyso_intersect = "SELECT DISTINCT prospecting_id as ptsoy FROM {} WHERE prospecting_id IN {}".format(
+                    ptsoy_query, pyso_query
+                )
                 matches_view_stmt = "CREATE VIEW matches AS {}".format(matches_query)
                 cursor.execute(matches_view_stmt)
-                cursor.execute("SELECT * FROM matches")
+                cursor.execute("SELECT * FROM users WHERE userID = matc")
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
