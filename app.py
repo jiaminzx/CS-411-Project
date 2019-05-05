@@ -259,7 +259,7 @@ def showMatches():
                 )
                 matches_view_stmt = "CREATE VIEW matches AS {}".format(ptsoy_pyso_intersect)
                 cursor.execute(matches_view_stmt)
-                cursor.execute("SELECT * FROM users WHERE userID = matches")
+                cursor.execute("SELECT * FROM users WHERE userID IN matches")
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
@@ -379,5 +379,5 @@ def load_user(userid):
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8084)
     # app.run()
