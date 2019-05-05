@@ -277,13 +277,17 @@ def showMatches():
         elif pref=='straight' and gender.lower()=='m':
             genderPref='Women'
             try:
-                ptsoy_query = "SELECT prospecting_id FROM yeses_tbl WHERE viewed__id = {}".format(userID)
-                pyso_query = "SELECT viewed__id FROM yeses_tbl WHERE prospecting_id = {}".format(userID)
-                matches_query = "{} INTERSECT {}".format(ptsoy_query, pyso_query)
-                matches_view_stmt = "CREATE VIEW matches AS {}".format(matches_query)
-                cursor.execute(matches_view_stmt)
-                cursor.execute("SELECT * FROM matches")
-                rows=cursor.fetchall()
+                # ptsoy_query = "SELECT prospecting_id FROM yeses_tbl WHERE viewed__id = {}".format(userID)
+                # pyso_query = "SELECT viewed__id FROM yeses_tbl WHERE prospecting_id = {}".format(userID)
+                # matches_query = "{} INTERSECT {}".format(ptsoy_query, pyso_query)
+                # matches_view_stmt = "CREATE VIEW matches AS {}".format(matches_query)
+                # cursor.execute(matches_view_stmt)
+                # cursor.execute("SELECT * FROM matches")
+                # rows=cursor.fetchall()
+                matches_query = "select YT1.prospecting_id from yeses_tbl as YT1 where YT1.viewed__id = {} and YT1.prospecting_id IN (select YT2.viewed__id from yeses_tbl as YT2 where YT2.prospecting_id = {})".format(userID, userID)
+                # matches_view = "CREATE VIEW match_ids AS {}"
+                cursor.execute("SELECT * from users WHERE userID IN ".format(matches_query))
+                rows = cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
         return render_template('userHome.html', data=rows,name=name)
