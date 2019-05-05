@@ -211,7 +211,7 @@ def adduser():
     return render_template('signup.html')
 
 #edit profile
-@app.route('/showModify', methods=['POST'])
+@app.route('/showModify', methods=['POST','GET'])
 def moduser():
     #print "Entered modUser"
     if request.method == 'POST':
