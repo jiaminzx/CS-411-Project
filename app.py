@@ -34,9 +34,7 @@ class User(UserMixin):
     def is_active(self):
         return self.active
 
-    # def get_auth_token(self):
-    #     return make_secure_token(self.username , key='secret_key')
-
+#shows who is active
 class UsersRepository:
 
     def __init__(self):
@@ -58,7 +56,6 @@ class UsersRepository:
         self.users_id_dict.pop(userID)
 
 users_repository = UsersRepository()
-
 
 @app.route("/")
 def main():
@@ -169,9 +166,7 @@ def userHome():
             return(str(e))
     return render_template('userHome.html',name=name)     
 
-
-
-
+#show delete without post and get
 @app.route('/showDelete')
 def delete():
     return render_template('delete.html')
@@ -182,7 +177,7 @@ def handle_data():
     if request.method == 'POST':
         projectpath = request.form['projectFilepath']
 
-
+#sign up and complete parts of your profile
 @app.route('/showSignUp', methods=['POST','GET'])
 def adduser():
     #print "adduser Entered"
@@ -215,6 +210,7 @@ def adduser():
           return(str(e))
     return render_template('signup.html')
 
+#edit profile
 @app.route('/showModify', methods=['POST'])
 def moduser():
     #print "Entered modUser"
