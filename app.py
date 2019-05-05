@@ -267,12 +267,17 @@ def showMatches():
             # cursor.execute("SELECT * FROM users AS match_profiles WHERE userID IN (SELECT * FROM matches)")
             # rows=cursor.fetchall()
 
-            matches_query = "select YT1.prospecting_id from yeses_tbl as YT1 where YT1.viewed__id = {} and YT1.prospecting_id IN (select YT2.viewed__id from yeses_tbl as YT2 where YT2.prospecting_id = {})".format(userID, userID)
-            # matches_view = "CREATE VIEW match_ids AS {}"
-            cursor.execute("SELECT * from users WHERE userID IN ({})".format(matches_query))
+            pyso_view = "CREATE VIEW pyso_view AS select YT2.viewed__id from yeses_tbl as YT2 where YT2.prospecting_id = {}".format(userID)
+            cursor.execute(pyso_view)
+
+            # matches_query = "SELECT YT1.prospecting_id FROM yeses_tbl AS YT1 WHERE YT1.viewed__id = {} and YT1.prospecting_id IN pyso_view".format(userID)
+            matches_view = "CREATE VIEW matches_view AS SELECT YT1.prospecting_id FROM yeses_tbl AS YT1 WHERE YT1.viewed__id = {} and YT1.prospecting_id IN pyso_view".format(userID)
+            cursor.execute("SELECT * from users WHERE userID IN matches_view".format(matches_query))
             print("executed query")
             rows = cursor.fetchall()
             print("got rows")
+            cursor.execute("DROP VIEW pyso_view")
+            cursor.execute("DROP VIEW matches_view")
         except mysql.connector.Error as error:
             print("Failed to get record from database: {}".format(error))
 
