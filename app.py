@@ -289,9 +289,9 @@ def show_user_queue():
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
-        return render_template('userHome.html', data=rows,name=name)
+        return render_template('possibleMatch.html', data=rows,name=name,i=i)
 
-    return render_template('possibleMatch.html',name=name)
+    # return render_template('possibleMatch.html',name=name)
 
 
 # handle login failed
