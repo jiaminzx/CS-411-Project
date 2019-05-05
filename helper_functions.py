@@ -44,6 +44,7 @@ def getName(registeredUser, cursor):
         names=cursor.fetchall() #should only retrieve one value
         names=re.sub(r'[^\w\s]','',str(names))
         name=names[1:]
+        print(names)
         return name
 
 def getPrefandGen(userID, cursor):

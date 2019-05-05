@@ -4,14 +4,19 @@ from flask import Flask, render_template, json, jsonify, request
 from flask import flash, redirect, session, abort,url_for, make_response
 from flask_login import LoginManager , login_required , UserMixin , login_user
 
-
 from helper_functions import User , UsersRepository, getName, getPrefandGen
 
+################### IMPORTANT ###########################
+# When running on cPanel
+# 1. Change mariadb.connect
+# 2. Comment out __main__
+# 3. 'users' table called 'TEST 2'
+#########################################################
+
 #Use this line for cPanel
-# db = mariadb.connect(user='root', password='password', database='m2z2')
+# db = mariadb.connect(user='pickles249_admin', password='csProject411!',database='pickles249_test')
 #Use this line for VM
 db = mariadb.connect(user='root', password='password',database='m2z2')
-# db = mariadb.connect(user='user', password='password',database='m2z2')
 
 cursor = db.cursor(buffered= True)
 
@@ -331,5 +336,5 @@ def load_user(userid):
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
     # app.run()
