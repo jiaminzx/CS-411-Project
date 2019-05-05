@@ -244,7 +244,8 @@ def deluser():
     return render_template('delete.html')
 
 
-@app.route("/swipe")
+@app.route("/swipe", methods = ["POST", "GET"])
+@login_required
 def show_user_queue():
     n_profiles_to_fetch = 2
 
