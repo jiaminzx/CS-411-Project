@@ -10,6 +10,8 @@ import mysql.connector as mariadb
 # db = mariadb.connect(user='root', password='password', database='m2z2')
 #Use this line for VM
 db = mariadb.connect(user='root', password='password',database='m2z2')
+# db = mariadb.connect(user='user', password='password',database='m2z2')
+
 cursor = db.cursor(buffered= True)
 
 #db.close() needs to be called to close connection
@@ -45,6 +47,7 @@ class UsersRepository:
 
     def save_user(self, user):
         self.users_id_dict.setdefault(user.id, user)
+
         self.users.setdefault(user.email, user)
 
     def get_user(self, email):
@@ -99,7 +102,6 @@ def login():
             # print('Register user %s , password %s' % (registeredUser.email, registeredUser.password))
             if not userID:
                 error="invalid email or password"
-
                 # return redirect(url_for('userHome'))
             else:
                 print('Logged in..')
@@ -265,26 +267,6 @@ def moduser():
           return(str(e))
     return render_template('modify.html', error=error)
 
-    # #print "Entered modUser"
-    # if request.method == 'POST':
-    #     try:
-    #         username = request.form['inputName']
-    #         password = request.form['inputPassword']
-    #         email = request.form['inputEmail']
-    #         height =  request.form['inputHeight']
-    #         sex = request.form['inputGender']
-    #         try:
-    #             cursor.execute('UPDATE LOW_PRIORITY users SET name="%s", height="%s",sex="%s" WHERE email="%s"' % (username, height, sex, email))
-    #             db.commit()
-    #         except Exception as e:
-    #           return(str(e))
-    #         # cursor.execute("INSERT INTO users (name, email, password) VALUES (%s,%s, %s)",(username, email, password))
-    #         # db.commit()
-    #
-    #     except Exception as e:
-    #       return(str(e))
-    # return render_template('modify.html')
-
 @app.route('/showDelete', methods=['POST'])
 def deluser():
     print("Time to delete")
@@ -303,6 +285,117 @@ def deluser():
     session.pop('Login', None)
     return redirect(url_for('main'))
 
+userNum = -1
+@app.route("/swipe", methods = ["POST", "GET"])
+@login_required
+def show_user_queue():
+    n_profiles_to_fetch = 2
+    global userNum
+    userNum = userNum + 1
+
+    userID = request.cookies.get('Login')
+    print("user in session:" +str(userID))
+
+    # CREATE VIEW `view_name` AS SELECT statement
+
+    registeredUser = users_repository.get_user_by_id(userID)
+    print(registeredUser.email)
+    rows=[]
+    cursor = db.cursor()
+    cursor.execute('SELECT name FROM users WHERE email="%s"' % (registeredUser.email))
+    names=cursor.fetchall() #should only retrieve one value
+    names=re.sub(r'[^\w\s]','',str(names))
+    name=names[1:]
+    print(name)
+    if request.method == 'GET':
+        rows=[]
+        cursor = db.cursor()
+
+        #use of prepared statment
+        spq = """SELECT orientation FROM users WHERE userID= %s"""
+        cursor.execute(spq, [str(userID)])
+        pref=cursor.fetchall()
+        pref=re.sub(r'[^\w\s]','',str(pref))
+        pref=pref[1:]
+
+        spq="""SELECT sex FROM users WHERE userID= %s"""
+        cursor.execute(spq, [str(userID)])
+        gender=cursor.fetchall()
+        gender=re.sub(r'[^\w\s]','',str(gender))
+        gender=gender[1:]
+
+        if pref=='straight' and gender.lower()=='f':
+            genderPref='Men'
+            try:
+                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+                rows=cursor.fetchall()
+            except mysql.connector.Error as error:
+                print("Failed to get record from database: {}".format(error))
+
+        elif pref=='straight' and gender.lower()=='m':
+            genderPref='Women'
+            try:
+                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+                rows=cursor.fetchall()
+            except mysql.connector.Error as error:
+                print("Failed to get record from database: {}".format(error))
+        return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
+
+    if request.method == 'POST':
+        rows=[]
+        cursor = db.cursor()
+
+        #use of prepared statment
+        spq = """SELECT orientation FROM users WHERE userID= %s"""
+        cursor.execute(spq, [str(userID)])
+        pref=cursor.fetchall()
+        pref=re.sub(r'[^\w\s]','',str(pref))
+        pref=pref[1:]
+
+        spq="""SELECT sex FROM users WHERE userID= %s"""
+        cursor.execute(spq, [str(userID)])
+        gender=cursor.fetchall()
+        gender=re.sub(r'[^\w\s]','',str(gender))
+        gender=gender[1:]
+
+        if pref=='straight' and gender.lower()=='f':
+            genderPref='Men'
+            try:
+                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+                rows=cursor.fetchall()
+
+                # insert into yeses_tbl
+                decision = request.form["decision"]
+                # decision = request.data
+                print(decision)
+                if decision == "yes":
+                    cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
+                                   "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
+                    db.commit()
+
+            except mysql.connector.Error as error:
+                print("Failed to get record from database: {}".format(error))
+
+        elif pref=='straight' and gender.lower()=='m':
+            genderPref='Women'
+            try:
+                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+                rows=cursor.fetchall()
+
+                # insert into yeses_tbl
+                decision = request.form["decision"]
+                print(decision)
+                # print("able to access value in form")
+                if decision == "yes":
+                # quer = "INSERT INTO yeses_tbl (prospecting_id, viewed__id) VALUES ({},{:d})".format(str(userID), rows[userNum - 1][0])
+                    cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
+                                   "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
+                    db.commit()
+            except mysql.connector.Error as error:
+                print("Failed to get record from database: {}".format(error))
+        return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
+
+    # return render_template('possibleMatch.html',name=name)
 
 # handle login failed
 @app.errorhandler(401)
