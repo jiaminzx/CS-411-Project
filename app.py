@@ -7,9 +7,9 @@ import re
 import mysql.connector as mariadb
 
 #Use this line for cPanel
-# db = mariadb.connect(user='root', password='password', database='m2z2')
+db = mariadb.connect(user='root', password='password', database='m2z2')
 #Use this line for VM
-db = mariadb.connect(user='user', password='password',database='m2z2')
+# db = mariadb.connect(user='user', password='password',database='m2z2')
 cursor = db.cursor(buffered= True)
 
 #db.close() needs to be called to close connection
@@ -42,17 +42,17 @@ class UsersRepository:
         self.users = dict()
         self.users_id_dict = dict()
         self.id = 0
-    
+
     def save_user(self, user):
         self.users_id_dict.setdefault(user.id, user)
         self.users.setdefault(user.username, user)
-    
+
     def get_user(self, username):
         return self.users.get(username)
-    
+
     def get_user_by_id(self, userid):
         return self.users_id_dict.get(userid)
-    
+
     def remove_user(self,userID):
         self.users_id_dict.pop(userID)
 
@@ -79,9 +79,9 @@ def login():
             cursor.execute(spq, [str(username),str(password)])
             userID=cursor.fetchall()
 
-            print(userID)   
+            print(userID)
             userID=re.sub(r'[^\w\s]','',str(userID))
-            
+
             # print(userID)
             new_user = User(username , password , userID)
             users_repository.save_user(new_user)
@@ -91,7 +91,7 @@ def login():
             # print('Register user %s , password %s' % (registeredUser.username, registeredUser.password))
             if not userID:
                 error="invalid username or pass"
-                
+
                 # return redirect(url_for('userHome'))
             else:
                 print('Logged in..')
@@ -108,7 +108,7 @@ def login():
 @app.route("/userHome",methods=['GET','POST'])
 @login_required
 def userHome():
-    
+
     userID = request.cookies.get('Login')
     print("user in session:" +str(userID))
 
@@ -127,13 +127,13 @@ def userHome():
         pref=cursor.fetchall()
         pref=re.sub(r'[^\w\s]','',str(pref))
         pref=pref[1:]
-       
+
         spq="""SELECT sex FROM users WHERE userID= %s"""
         cursor.execute(spq, [str(userID)])
         gender=cursor.fetchall()
         gender=re.sub(r'[^\w\s]','',str(gender))
         gender=gender[1:]
-       
+
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
             try:
@@ -143,15 +143,15 @@ def userHome():
                 print("Failed to get record from database: {}".format(error))
 
         elif pref=='straight' and gender.lower()=='m':
-            genderPref='Women' 
+            genderPref='Women'
             try:
                 cursor.execute("SELECT * FROM users WHERE sex = 'F'")
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
         return render_template('userHome.html', data=rows,name=name)
-    
-    return render_template('userHome.html',name=name)     
+
+    return render_template('userHome.html',name=name)
 
 
 @app.route('/logout')
@@ -186,7 +186,7 @@ def adduser():
             education = request.form['inputEducation']
             ethnicity = request.form['inputEthnicity']
             orientation = request.form['orientation']
-            
+
             if age<18:
                 return "You must be above 18"
 
@@ -194,7 +194,7 @@ def adduser():
             rows=cursor.fetchall()
             if len(rows) != 0:
                 return "Email already in use"
-            
+
             cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity,orientation)"
                            "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(username, email, password, height, sex, age, education, ethnicity,orientation))
             db.commit()
@@ -249,13 +249,12 @@ def deluser():
 def page_not_found(e):
     return flask.Response('<p>Login failed</p>')
 
-# callback to reload the user object        
+# callback to reload the user object
 @login_manager.user_loader
 def load_user(userid):
     return users_repository.get_user_by_id(userid)
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    #app.run(host='sp19-cs411-36.cs.illinois.edu', port=8084)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8084)
     app.run()
-
