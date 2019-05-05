@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+    <head>
+        <title>m2z2</title>
+
+
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="../static/signup.css" rel="stylesheet">
+
+      </head>
+   <body>
+
+         <ul class="nav nav-pills pull-right">
+
+            <li role="presentation" class="active"><a href="#"> View Your Profile </a> | </li>
+            <li role="presentation" ><a href="showDelete"> Delete Account </a> | </li>
+            <li role="presentation" ><a href="showModify"> Edit Profile </a>|</li>
+            <li role="presentation" ><a href="swipe"> Swipe </a>|</li>
+            <li role="presentation" ><a href="logout"> Logout </a></li>
+
+          </ul>
+
+          {% if current_user.is_authenticated %}
+            Hi {{ name }}!
+          {% endif %}
+        <h2>Your matches shown below</h2>
+
+         <table border="1" cellpadding="5" cellspacing="5">
+               <tbody>
+
+                 <td>Name: {{data[i][18]}}</td>
+                  <td>Email: {{data[i][19]}}</td>
+                  <td>Height: {{data[i][7]}}</td>
+                  <td>Sex: {{data[i][15]}}</td>
+
+               <!-- {% for item in data %}
+               <tr>
+
+                   <td>Name: {{item[18]}}</td>
+                    <td>Email: {{item[19]}}</td>
+                    <td>Height: {{item[7]}}</td>
+                    <td>Sex: {{item[15]}}</td>
+
+               </tr>
+               {% endfor %} -->
+               </tbody>
+           </table>
+
+   </body>
+</html>
