@@ -336,6 +336,7 @@ def show_user_queue():
                 # decision = request.data
                 # print("able to access value in form")
                 # if decision == "yes
+                print(rows[userNum - 1][0])
                 cursor.execute("INSERT INTO yeses_tbl (prospecting_id, viewed__id) VALUES ({},{})".format(userID, rows[userNum - 1][0]))
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
