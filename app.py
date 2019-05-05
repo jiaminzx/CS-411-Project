@@ -67,6 +67,14 @@ def main():
 def signUp():
     return render_template('signup.html')
 
+@app.route('/showDelete')
+def delete():
+    return render_template('delete.html')
+
+@app.route('/showModify')
+def modify():
+    return render_template('modify.html')
+
 @app.route('/SignIn' , methods=['GET', 'POST'])
 def login():
     error=''
@@ -164,17 +172,6 @@ def logout():
     session.pop('Login', None)
     return redirect(url_for('main'))
 
-@app.route('/showDelete')
-def delete():
-    return render_template('delete.html')
-
-@app.route('/showSignUp/handle_data', methods=['POST'])
-def handle_data():
-    # print "HEEEEEEERE"
-    if request.method == 'POST':
-        projectpath = request.form['projectFilepath']
-
-
 @app.route('/showSignUp', methods=['POST'])
 def adduser():
     error=''
@@ -190,18 +187,23 @@ def adduser():
             education = request.form['inputEducation']
             ethnicity = request.form['inputEthnicity']
             orientation = request.form['orientation']
+            print(age)
 
-            if age<18:
-                return render_template('signup.html', error="You must be above 18")
-
-            cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
-            duplicate_emails=cursor.fetchall()
-            if len(duplicate_emails) != 0:
-                error="Email already in use"
+            if (int(age) < 18):
+                print("Error")
+                error="You must be above 18"
+            elif( int(height) < 0 or int(height) > 108):
+                print("Error")
+                error="Your height doesn't fit the range"
             else:
-                cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity,orientation)"
-                               "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(name, email, password, height, sex, age, education, ethnicity,orientation))
-                db.commit()
+                cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
+                duplicate_emails=cursor.fetchall()
+                if len(duplicate_emails) != 0:
+                    error="Email already in use"
+                else:
+                    cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity,orientation)"
+                                   "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(name, email, password, height, sex, age, education, ethnicity,orientation))
+                    db.commit()
 
         except Exception as e:
           return(str(e))
@@ -209,25 +211,79 @@ def adduser():
 
 @app.route('/showModify', methods=['POST'])
 def moduser():
-    #print "Entered modUser"
+    error=''
+    userID = request.cookies.get('Login')
+    print("user in session:" +str(userID))
+    registeredUser = users_repository.get_user_by_id(userID)
     if request.method == 'POST':
         try:
-            username = request.form['inputName']
+            print("Reached")
+            email = registeredUser.email
+            cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
+            user_info=cursor.fetchall()
+            print("Reached!")
+            name = request.form['inputName']
             password = request.form['inputPassword']
-            email = request.form['inputEmail']
-            height =  request.form['inputHeight']
+            height = request.form['inputHeight']
             sex = request.form['inputGender']
-            try:
-                cursor.execute('UPDATE LOW_PRIORITY users SET name="%s", height="%s",sex="%s" WHERE email="%s"' % (username, height, sex, email))
-                db.commit()
-            except Exception as e:
-              return(str(e))
-            # cursor.execute("INSERT INTO users (name, email, password) VALUES (%s,%s, %s)",(username, email, password))
-            # db.commit()
+            age = request.form['inputAge']
+            education = request.form['inputEducation']
+            ethnicity = request.form['inputEthnicity']
+            orientation = request.form['orientation']
+            print(name, email, password, height, sex, age, education, ethnicity,orientation)
+            for value in user_info:
+                if(name == u''):
+                    name = value[18]
+                if(password == u''):
+                    password = value[17]
+                if(height == u''):
+                    height = value[7]
+                if(sex == u'no change'):
+                    sex = value[15]
+                if(age == u''):
+                    age = value[1]
+                if(education == u''):
+                    education = value[5]
+                if(ethnicity ==  u'no change'):
+                    ethnicity = value[6]
+                if(orientation ==  u'no change'):
+                    orientation = value[12]
+            print("Reached!!")
+            print(name, email, password, height, sex, age, education, ethnicity,orientation)
+            if int(age)<18:
+                return render_template('modify.html', error="Cannot change heigt to go below 18")
 
+            print(name, email, password, height, sex, age, education, ethnicity,orientation)
+            cursor.execute('UPDATE LOW_PRIORITY users SET name="%s", password="%s", height="%s", sex="%s", age="%s", education="%s", ethnicity="%s", orientation="%s" WHERE email="%s"' \
+             % (name, password, height, sex, age, education, ethnicity, orientation, email))
+
+            # cursor.execute('UPDATE LOW_PRIORITY users SET name="%s", height="%s",sex="%s" WHERE email="%s"' % (username, height, sex, email))
+            db.commit()
+            flash("Updated")
+            print("Reached!!!")
         except Exception as e:
           return(str(e))
-    return render_template('modify.html')
+    return render_template('modify.html', error=error)
+
+    # #print "Entered modUser"
+    # if request.method == 'POST':
+    #     try:
+    #         username = request.form['inputName']
+    #         password = request.form['inputPassword']
+    #         email = request.form['inputEmail']
+    #         height =  request.form['inputHeight']
+    #         sex = request.form['inputGender']
+    #         try:
+    #             cursor.execute('UPDATE LOW_PRIORITY users SET name="%s", height="%s",sex="%s" WHERE email="%s"' % (username, height, sex, email))
+    #             db.commit()
+    #         except Exception as e:
+    #           return(str(e))
+    #         # cursor.execute("INSERT INTO users (name, email, password) VALUES (%s,%s, %s)",(username, email, password))
+    #         # db.commit()
+    #
+    #     except Exception as e:
+    #       return(str(e))
+    # return render_template('modify.html')
 
 @app.route('/showDelete', methods=['POST'])
 def deluser():
@@ -260,5 +316,5 @@ def load_user(userid):
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
     # app.run()

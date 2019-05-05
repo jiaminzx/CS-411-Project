@@ -17,8 +17,7 @@
       <div class="header">
         <nav>
           <ul class="nav nav-pills pull-right">
-              <li role="presentation" ><a href="/">Home</a> |</li>
-              <li role="presentation" ><a href="userHome.html"> View Profile </a></li>
+              <li role="presentation" ><a href="userHome"> View Profile </a> | </li>
               <li role="presentation"><a href="showDelete">Delete Account </a> | </li>
               <li role="presentation" class="active"><a href="#"> Edit Profile </a></li>
           </ul>
@@ -30,22 +29,58 @@
         <h1>Fill out your information below:</h1>
         <form action="{{ url_for('moduser') }}" method="post">
           <label for="inputName" class="sr-only">Name</label>
-          <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Username" required autofocus>
-          <label for="inputEmail" class="sr-only">Name</label>
-          <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
+          <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Username" autofocus>
           <label for="inputPassword" class="sr-only">Password</label>
-          <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
-          <label for="inputHeight" class="sr-only">Height(inches)</label>
-          <input type="number" name="inputHeight" id="inputHeight" class="form-control" placeholder="Height" required>
-          <label for="inputGender" class="sr-only">Gender</label>
-          <input type="name" name="inputGender" id="inputGender" class="form-control" placeholder="Gender" required autofocus>   
-          <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Modify User</button>
-
+          <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password">
+          <label for="inputHeight" class="sr-only">Height</label>
+          <input type="number" name="inputHeight" id="inputHeight" class="form-control" placeholder="Height(inches)">
+          <select class="form-control" id="inputGender" name="inputGender">
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+              <option value="NB">Non-binary</option>
+              <option value="other">Other</option>
+              <option value="no change" selected>Select change in gender preference (default no change)</option>
+          </select>
+          <label for="inputAge" class="sr-only">age</label>
+          <input type="number" name="inputAge" id="inputAge" class="form-control" placeholder="Age" autofocus>
+          <label for="inputEducation" class="sr-only">Education Level</label>
+          <input type="name" name="inputEducation" id="inputEducation" class="form-control" placeholder="Education Level">
+          <select class="form-control" id="inputEthnicity" name="inputEthnicity">
+              <option value="american_indian">American Indian</option>
+              <option value="black_african">Black/African Decent</option>
+              <option value="east_asian">East Asian</option>
+              <option value="hispanic_latino">Hispanic/Latino</option>
+              <option value="middle_easter">Middle Eastern</option>
+              <option value="pacific_islander">Pacific Islander</option>
+              <option value="south_asian">South Asian</option>
+              <option value="white_caucasian">White/Caucasian</option>
+              <option value="other">Other</option>
+              <option value="no change" selected>Select change in ethnicity (default no change)</option>
+          </select>
+          <select class="form-control" id="orientation" name="orientation">
+              <option value="straight">straight</option>
+              <option value="bi-sexual">bi-sexual</option>
+              <option value="pansexual" selected>pansexual</option>
+              <option value="gay">gay</option>
+              <option value="no change" selected>Select gender change in preference (default No Change)</option>
+          </select>
+          <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Update</button>
         </form>
 
       </div>
+      {% block body %}
+        {% if error %}
+          <h2 class=error><strong>Error:</strong> {{ error }} </h2>
+        {% endif %}
+      {% endblock %}
+      {% with messages = get_flashed_messages() %}
 
-
+       {% if messages %}
+         {% for message in messages %}
+           <h3 class="text-muted">{{ message }}</h3>
+          {% endfor %}
+       {% endif %}
+     {% endwith %}
 
       <footer class="footer">
         <p>&copy; Company 2019</p>
