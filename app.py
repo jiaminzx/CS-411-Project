@@ -338,7 +338,7 @@ def show_user_queue():
                 decision = request.form["decision"]
                 print(decision)
                 # print("able to access value in form")
-                if decision == "yes
+                if decision == "yes":
                 # quer = "INSERT INTO yeses_tbl (prospecting_id, viewed__id) VALUES ({},{:d})".format(str(userID), rows[userNum - 1][0])
                     cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
                                    "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
