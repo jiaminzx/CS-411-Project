@@ -244,6 +244,10 @@ def deluser():
     return render_template('delete.html')
 
 
+@app.route("/swipe")
+def show_user_queue():
+    
+
 # handle login failed
 @app.errorhandler(401)
 def page_not_found(e):
