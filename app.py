@@ -243,12 +243,12 @@ def deluser():
           return(str(e))
     return render_template('delete.html')
 
-
+userNum = -1
 @app.route("/swipe", methods = ["POST", "GET"])
 @login_required
 def show_user_queue():
     n_profiles_to_fetch = 2
-    i = 0
+    userNum = userNum + 1
 
     userID = request.cookies.get('Login')
     print("user in session:" +str(userID))
@@ -293,7 +293,6 @@ def show_user_queue():
         return render_template('possibleMatch.html', data=rows,name=name,i=i)
 
     # return render_template('possibleMatch.html',name=name)
-
 
 # handle login failed
 @app.errorhandler(401)
