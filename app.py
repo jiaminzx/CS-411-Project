@@ -204,12 +204,12 @@ def adduser():
                 print("Error")
                 error="Your height doesn't fit the range"
             else:
-                cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
+                cursor.execute('SELECT * FROM TABLE4 WHERE email="%s"' % (email))
                 duplicate_emails=cursor.fetchall()
                 if len(duplicate_emails) != 0:
                     error="Email already in use"
                 else:
-                    cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity,orientation)"
+                    cursor.execute("INSERT LOW_PRIORITY INTO TABLE4 (name, email, password, height, sex, age, education, ethnicity,orientation)"
                                    "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(name, email, password, height, sex, age, education, ethnicity,orientation))
                     db.commit()
 
@@ -227,7 +227,7 @@ def moduser():
         try:
             print("Reached")
             email = registeredUser.email
-            cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
+            cursor.execute('SELECT * FROM TABLE4 WHERE email="%s"' % (email))
             user_info=cursor.fetchall()
             print("Reached!")
             name = request.form['inputName']
