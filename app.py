@@ -243,7 +243,7 @@ def deluser():
           return(str(e))
     return render_template('delete.html')
 
-userNum = 0
+userNum = -1
 @app.route("/swipe", methods = ["POST", "GET"])
 @login_required
 def show_user_queue():
