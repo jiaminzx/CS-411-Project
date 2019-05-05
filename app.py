@@ -8,9 +8,9 @@ from flask_login import LoginManager , login_required , UserMixin , login_user
 from helper_functions import User , UsersRepository, getName, getPrefandGen
 
 #Use this line for cPanel
-# db = mariadb.connect(user='root', password='password', database='m2z2')
+db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
 #Use this line for VM
-db = mariadb.connect(user='root', password='password',database='m2z2')
+# db = mariadb.connect(user='root', password='password',database='m2z2')
 # db = mariadb.connect(user='user', password='password',database='m2z2')
 
 cursor = db.cursor(buffered= True)
@@ -330,6 +330,6 @@ def load_user(userid):
     return users_repository.get_user_by_id(userid)
 
 # #comment out when hosting on cpanel
-if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8048)
-    # app.run()
+# if __name__ == "__main__":
+#     app.run(host='sp19-cs411-36.cs.illinois.edu', port=8048)
+#     # app.run()
