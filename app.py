@@ -337,7 +337,9 @@ def show_user_queue():
                 # print("able to access value in form")
                 # if decision == "yes
                 print(rows[userNum - 1][0])
-                cursor.execute("INSERT INTO yeses_tbl (prospecting_id, viewed__id) VALUES ({:d},{:d})".format(userID, rows[userNum - 1][0]))
+                quer = "INSERT INTO yeses_tbl (prospecting_id, viewed__id) VALUES ({},{:d})".format(str(userID), rows[userNum - 1][0])
+                print(quer)
+                cursor.execute(quer)
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
         return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
