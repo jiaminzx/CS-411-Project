@@ -250,15 +250,16 @@ def showMatches():
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
             try:
-                ptsoy_query = "SELECT prospecting_id FROM yeses_tbl WHERE viewed__id = {}".format(userID)
-                pyso_query = "SELECT viewed__id AS FROM yeses_tbl WHERE prospecting_id = {}".format(userID)
+                # "SELECT DISTINCT ptsoy FROM (SELECT prospecting_id AS ptsoy FROM yeses_tbl as yeses1 WHERE viewed__id = 6) AS matches_ids WHERE ptsoy IN (SELECT viewed__id AS pyso FROM yeses_tbl as yeses2 WHERE prospecting_id = 6)"
+                ptsoy_query = "SELECT prospecting_id AS ptsoy FROM yeses_tbl as yeses1 WHERE viewed__id = {}".format(userID)
+                pyso_query = "SELECT viewed__id AS pyso FROM yeses_tbl as yeses2 WHERE prospecting_id = {}".format(userID)
                 # matches_query = "{} INTERSECT {}".format(ptsoy_query, pyso_query)
-                ptsoy_pyso_intersect = "SELECT DISTINCT prospecting_id as ptsoy FROM {} WHERE prospecting_id IN {}".format(
+                ptsoy_pyso_intersect = "SELECT DISTINCT ptsoy FROM ({}) AS matches_ids WHERE prospecting_id IN ({})".format(
                     ptsoy_query, pyso_query
                 )
                 matches_view_stmt = "CREATE VIEW matches AS {}".format(ptsoy_pyso_intersect)
                 cursor.execute(matches_view_stmt)
-                cursor.execute("SELECT * FROM users WHERE userID = matc")
+                cursor.execute("SELECT * FROM users WHERE userID = matches")
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
