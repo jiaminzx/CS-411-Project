@@ -256,7 +256,7 @@ def showMatches():
                 ptsoy_pyso_intersect = "SELECT DISTINCT prospecting_id as ptsoy FROM {} WHERE prospecting_id IN {}".format(
                     ptsoy_query, pyso_query
                 )
-                matches_view_stmt = "CREATE VIEW matches AS {}".format(matches_query)
+                matches_view_stmt = "CREATE VIEW matches AS {}".format(ptsoy_pyso_intersect)
                 cursor.execute(matches_view_stmt)
                 cursor.execute("SELECT * FROM users WHERE userID = matc")
                 rows=cursor.fetchall()
