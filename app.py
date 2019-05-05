@@ -232,7 +232,7 @@ def deluser():
     session.pop('Login', None)
     return redirect(url_for('main'))
 
-@app.route("/showMatches")
+@app.route("/showMatches", methods = ['GET'])
 def showMatches():
     userID = request.cookies.get('Login')
     print("user in session:" +str(userID))
