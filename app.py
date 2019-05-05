@@ -248,6 +248,7 @@ userNum = -1
 @login_required
 def show_user_queue():
     n_profiles_to_fetch = 2
+    global userNum
     userNum = userNum + 1
 
     userID = request.cookies.get('Login')
