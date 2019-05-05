@@ -72,35 +72,45 @@ def login():
     error=''
     if request.method == 'POST':
         try:
+            #If you get the unread error make your cursor buffered
             cursor = db.cursor(buffered= True)
+
+            #Get username from login page
             username = request.form['inputName']
             password = request.form['inputPassword']
+
+            #Select userID based on username and password to establish session
             spq = """SELECT userID FROM users WHERE name = %s AND password=%s"""
             cursor.execute(spq, [str(username),str(password)])
             userID=cursor.fetchall()
 
+            #userid comes in ugly format so we want to clean it
             print(userID)   
             userID=re.sub(r'[^\w\s]','',str(userID))
-            
             # print(userID)
+            # create user for quick access
             new_user = User(username , password , userID)
             users_repository.save_user(new_user)
-
             registeredUser = users_repository.get_user(username)
+
+
             # print('Users '+ str(users_repository.users))
             # print('Register user %s , password %s' % (registeredUser.username, registeredUser.password))
+            
+            #if the userID does not exist from query
             if not userID:
                 error="invalid username or pass"
-                
                 # return redirect(url_for('userHome'))
+            # username and password found
             else:
                 print('Logged in..')
-                #registeredUser=str(registeredUser)
-                #session['user'] = userID
+                # redirect to userhome if logged in and create response
                 resp = redirect(url_for("userHome"))
+                # SET SESSION FOR USERID
                 resp.set_cookie('Login',registeredUser.id)
                 login_user(registeredUser)
                 return resp
+        #match the try with except
         except Exception as e:
             return(str(e))
     return render_template('signIn.html',error=error)
@@ -109,6 +119,7 @@ def login():
 @login_required
 def userHome():
     
+    #Grab userID from existing session
     userID = request.cookies.get('Login')
     print("user in session:" +str(userID))
 
@@ -121,7 +132,7 @@ def userHome():
         rows=[]
         cursor = db.cursor()
 
-        #use of prepared statment
+        # use of prepared statment to find orientation/gender and what we should display
         spq = """SELECT orientation FROM users WHERE userID= %s"""
         cursor.execute(spq, [str(userID)])
         pref=cursor.fetchall()
@@ -134,6 +145,7 @@ def userHome():
         gender=re.sub(r'[^\w\s]','',str(gender))
         gender=gender[1:]
        
+        # use of gender and orientation to decide what to display 
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
             try:
