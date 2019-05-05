@@ -246,7 +246,7 @@ def deluser():
 
 @app.route("/swipe")
 def show_user_queue():
-    
+    pass
 
 # handle login failed
 @app.errorhandler(401)
