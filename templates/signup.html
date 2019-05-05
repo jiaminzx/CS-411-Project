@@ -17,12 +17,11 @@
       <div class="header">
         <nav>
           <ul class="nav nav-pills pull-right">
-            <li role="presentation" ><a href="/">Home</a> |</li>
-            <li role="presentation"><a href="showUsers">Show Users</a> |</li>
-            <li role="presentation" class="active"><a href="#">Sign Up | </a></li>
-            <li role="presentation"><a href="showDelete">Delete </a> | </li>
-            <li role="presentation"><a href="showModify">Modify </a></li>
+            <li role="presentation" ><a href="/"> Home </a> |</li>
+            <li role="presentation" class="active"><a href="#"> Sign Up | </a></li>
+            <li role="presentation" ><a href="/"> Sign In </a> |</li>
           </ul>
+
         </nav>
         <h3 class="text-muted">Sign Up Here</h3>
       </div>
@@ -31,27 +30,39 @@
         <h1>Fill out your information below:</h1>
         <form action="{{ url_for('adduser') }}" method="post">
           <label for="inputName" class="sr-only">Name</label>
-          <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Username" required autofocus>
-          <label for="inputEmail" class="sr-only">Name</label>
-          <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
+          <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Username" required="required" autofocus>
+          <label for="inputEmail" class="sr-only">email</label>
+          <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email" required="required" autofocus>
           <label for="inputPassword" class="sr-only">Password</label>
-          <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
+          <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required="required">
           <label for="inputHeight" class="sr-only">Height(inches)</label>
-          <input type="number" name="inputHeight" id="inputHeight" class="form-control" placeholder="Height" required>
+          <input type="number" name="inputHeight" id="inputHeight" class="form-control" placeholder="Height" required="required">
+
           <label for="inputGender" class="sr-only">Gender</label>
           <input type="name" name="inputGender" id="inputGender" class="form-control" placeholder="Gender" required autofocus>
+          <label for="inputAge" class="sr-only">age</label>
+          <input type="number" name="inputAge" id="inputAge" class="form-control" placeholder="Age" required autofocus>
+          <label for="inputEducation" class="sr-only">Education</label>
+          <input type="name" name="inputEducation" id="inputEducation" class="form-control" placeholder="Education" required>
+          <label for="inputEthnicity" class="sr-only">Ethnicity</label>
+          <input type="ethnicity" name="inputEthnicity" id="inputEthnicity" class="form-control" placeholder="Ethnicity" required>
+
+            <select class="form-control" id="orientation" name="orientation">
+                <option value="straight">straight</option>
+                <option value="bi-sexual">bi-sexual</option>
+                <option value="pansexual" selected>Select gender preference (default no preference)</option>
+                <option value="gay">gay</option>
+            </select>
+
           <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
         </form>
 
       </div>
-
-      {% with messages = get_flashed_messages() %}
-         {% if messages %}
-           {% for message in messages %}
-             <h3 class="text-muted">{{ message }}</h3>
-            {% endfor %}
-         {% endif %}
-       {% endwith %}
+      {% block body %}
+        {% if error %}
+          <h2 class=error><strong>Error:</strong> {{ error }} </h2>
+        {% endif %}
+      {% endblock %}
 
       <footer class="footer">
         <p>&copy; Company 2019</p>

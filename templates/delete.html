@@ -17,32 +17,24 @@
       <div class="header">
         <nav>
           <ul class="nav nav-pills pull-right">
-            <li role="presentation" ><a href="/">Home</a> |</li>
-            <li role="presentation"><a href="showUsers">Show Users </a> | </li>
-            <li role="presentation"><a href="showSignUp">Sign Up </a> | </li>
-            <li role="presentation" class="active"><a href="#">Delete </a> | </li>
-            <li role="presentation"><a href="showModify"> Modify </a></li>
+            <li role="presentation"><a href="userHome"> Go Back to your profile </a> | </li>
           </ul>
         </nav>
         <h3 class="text-muted">Delete Account Here</h3>
       </div>
 
       <div class="jumbotron">
-        <h1>Fill out your information below:</h1>
-        <form action="{{ url_for('deluser') }}" method="post">
-          <label for="inputName" class="sr-only">Name</label>
-          <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Username" required autofocus>
-          <label for="inputEmail" class="sr-only">Name</label>
-          <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
-          <label for="inputPassword" class="sr-only">Password</label>
-          <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
-          <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Delete User</button>
 
-        </form>
+          <h1>Are you sure you want to delete your profile?</h1>
+
+          <p class="lead"></p>
+          <form action="{{ url_for('deluser') }}" method="post">
+          <button id="btnSignIn" class="btn btn-lg btn-primary btn-success" type="submit">Delete for sure</button>
+          </form>
+
+          </p>
 
       </div>
-
-
 
       <footer class="footer">
         <p>&copy; Company 2019</p>

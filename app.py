@@ -1,23 +1,29 @@
 
-
-from flask import Flask, render_template, json, jsonify, request, abort, redirect, Response, url_for, flash
-
-# from flask.ext.login import LoginManager
-from flask_login import LoginManager, login_required , UserMixin , login_user
+from flask import Flask, render_template, json, jsonify, request
+from flask import flash, redirect, session, abort,url_for, make_response
+from flask_login import LoginManager , login_required , UserMixin , login_user
+import re
 #import MySQL
 import mysql.connector as mariadb
 
 #Use this line for cPanel
-# db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
+# db = mariadb.connect(user='root', password='password', database='m2z2')
 #Use this line for VM
-db = mariadb.connect(user='root', password='password', database='cs411project')
-cursor = db.cursor()
+db = mariadb.connect(user='root', password='password',database='m2z2')
+cursor = db.cursor(buffered= True)
+
 #db.close() needs to be called to close connection
+app = Flask(__name__)
+application = app # our hosting requires application in passenger_wsgi
+app.config['SECRET_KEY'] = 'secret_key'
+login_manager = LoginManager()
+login_manager.login_view = "login"
+login_manager.init_app(app)
 
 class User(UserMixin):
-    def __init__(self , username , password , id , active=True):
+    def __init__(self , email , password , id , active=True):
         self.id = id
-        self.username = username
+        self.email = email
         self.password = password
         self.active = active
 
@@ -28,118 +34,178 @@ class User(UserMixin):
         return self.active
 
     def get_auth_token(self):
-        return make_secure_token(self.username , key='secret_key')
+        return make_secure_token(self.email , key='secret_key')
 
 class UsersRepository:
 
     def __init__(self):
         self.users = dict()
         self.users_id_dict = dict()
-        self.identifier = 0
+        self.id = 0
 
     def save_user(self, user):
         self.users_id_dict.setdefault(user.id, user)
-        self.users.setdefault(user.username, user)
+        self.users.setdefault(user.email, user)
 
-    def get_user(self, username):
-        return self.users.get(username)
+    def get_user(self, email):
+        return self.users.get(email)
 
     def get_user_by_id(self, userid):
         return self.users_id_dict.get(userid)
 
-    def next_index(self):
-        self.identifier +=1
-        return self.identifier
+    def remove_user(self,userID):
+        self.users_id_dict.pop(userID)
 
 users_repository = UsersRepository()
 
-app = Flask(__name__)
-application = app # our hosting requires application in passenger_wsgi
-app.config['SECRET_KEY'] = 'secret_key'
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get(user_id)
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    # Here we use a class of some kind to represent and validate our
-    # client-side form data. For example, WTForms is a library that will
-    # handle this for us, and we use a custom LoginForm to validate.
-    form = LoginForm()
-    if form.validate_on_submit():
-        # Login and validate the user.
-        # user should be an instance of your `User` class
-        login_user(user)
-
-        flask.flash('Logged in successfully.')
-
-        next = flask.request.args.get('next')
-        # is_safe_url should check if the url is safe for redirects.
-        # See http://flask.pocoo.org/snippets/62/ for an example.
-        if not is_safe_url(next):
-            return flask.abort(400)
-
-        return flask.redirect(next or flask.url_for('index'))
-    return flask.render_template('login.html', form=form)
 
 @app.route("/")
 def main():
     return render_template('home.html')
 
-
 @app.route('/showSignUp')
 def signUp():
     return render_template('signup.html')
 
-@app.route('/showModify')
-def modify():
-    return render_template('modify.html')
+@app.route('/SignIn' , methods=['GET', 'POST'])
+def login():
+    error=''
+    if request.method == 'POST':
+        try:
+            cursor = db.cursor(buffered= True)
+            email = request.form['inputEmail']
+            password = request.form['inputPassword']
+            spq = """SELECT userID FROM users WHERE email = %s AND password=%s"""
+            cursor.execute(spq, [str(email),str(password)])
+            userID=cursor.fetchall()
+
+            print(userID)
+            userID=re.sub(r'[^\w\s]','',str(userID))
+
+            # print(userID)
+            new_user = User(email , password , userID)
+            users_repository.save_user(new_user)
+
+            registeredUser = users_repository.get_user(email)
+            # print('Users '+ str(users_repository.users))
+            # print('Register user %s , password %s' % (registeredUser.email, registeredUser.password))
+            if not userID:
+                error="invalid email or password"
+
+                # return redirect(url_for('userHome'))
+            else:
+                print('Logged in..')
+                #registeredUser=str(registeredUser)
+                #session['user'] = userID
+                resp = redirect(url_for("userHome"))
+                resp.set_cookie('Login',registeredUser.id)
+                login_user(registeredUser)
+                return resp
+        except Exception as e:
+            return(str(e))
+    return render_template('signIn.html',error=error)
+
+@app.route("/userHome",methods=['GET','POST'])
+@login_required
+def userHome():
+
+    userID = request.cookies.get('Login')
+    print("user in session:" +str(userID))
+
+    # CREATE VIEW `view_name` AS SELECT statement
+
+    registeredUser = users_repository.get_user_by_id(userID)
+    print(registeredUser.email)
+    rows=[]
+    cursor = db.cursor()
+    cursor.execute('SELECT name FROM users WHERE email="%s"' % (registeredUser.email))
+    names=cursor.fetchall() #should only retrieve one value
+    names=re.sub(r'[^\w\s]','',str(names))
+    name=names[1:]
+    print(name)
+    if request.method == 'GET':
+
+        #use of prepared statment
+        spq = """SELECT orientation FROM users WHERE userID= %s"""
+        cursor.execute(spq, [str(userID)])
+        pref=cursor.fetchall()
+        pref=re.sub(r'[^\w\s]','',str(pref))
+        pref=pref[1:]
+
+        spq="""SELECT sex FROM users WHERE userID= %s"""
+        cursor.execute(spq, [str(userID)])
+        gender=cursor.fetchall()
+        gender=re.sub(r'[^\w\s]','',str(gender))
+        gender=gender[1:]
+
+        if pref=='straight' and gender.lower()=='f':
+            genderPref='Men'
+            try:
+                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+                rows=cursor.fetchall()
+            except mysql.connector.Error as error:
+                print("Failed to get record from database: {}".format(error))
+
+        elif pref=='straight' and gender.lower()=='m':
+            genderPref='Women'
+            try:
+                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+                rows=cursor.fetchall()
+            except mysql.connector.Error as error:
+                print("Failed to get record from database: {}".format(error))
+        return render_template('userHome.html', data=rows,name=name)
+
+    return render_template('userHome.html',name=name)
+
+
+@app.route('/logout')
+def logout():
+    # remove the email from the session if it's there
+    session.pop('Login', None)
+    return redirect(url_for('main'))
 
 @app.route('/showDelete')
 def delete():
     return render_template('delete.html')
-
-@app.route('/showMessage')
-def messages():
-    return render_template('messages.html')
 
 @app.route('/showSignUp/handle_data', methods=['POST'])
 def handle_data():
     # print "HEEEEEEERE"
     if request.method == 'POST':
         projectpath = request.form['projectFilepath']
-        #print projectpath
-
-    # return render_template('signup.html')
 
 
-# @app.route('/addU')
 @app.route('/showSignUp', methods=['POST'])
 def adduser():
-    #print "adduser Entered"
+    error=''
     if request.method == 'POST':
         try:
-            username = request.form['inputName']
+            #required: name, password, email, height, sex, education, ethnicity
+            name = request.form['inputName']
             password = request.form['inputPassword']
             email = request.form['inputEmail']
-            height =  request.form['inputHeight']
+            height = request.form['inputHeight']
             sex = request.form['inputGender']
-            cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
-            rows=cursor.fetchall()
-            if len(rows) != 0:
-                #print "Email already in use"
-                flash('Email already in use. Sign up with a different email')
-                return render_template('signup.html')
+            age = request.form['inputAge']
+            education = request.form['inputEducation']
+            ethnicity = request.form['inputEthnicity']
+            orientation = request.form['orientation']
 
-            cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex) VALUES (%s,%s, %s, %s, %s)",(username, email, password, height, sex))
-            db.commit()
-            # print "Registered"
+            if age<18:
+                return render_template('signup.html', error="You must be above 18")
+
+            cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
+            duplicate_emails=cursor.fetchall()
+            if len(duplicate_emails) != 0:
+                error="Email already in use"
+            else:
+                cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity,orientation)"
+                               "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(name, email, password, height, sex, age, education, ethnicity,orientation))
+                db.commit()
+
         except Exception as e:
           return(str(e))
-    return render_template('signup.html')
+    return render_template('signup.html', error=error)
 
 @app.route('/showModify', methods=['POST'])
 def moduser():
@@ -165,66 +231,34 @@ def moduser():
 
 @app.route('/showDelete', methods=['POST'])
 def deluser():
-    #print "Entered delUser"
-    if request.method == 'POST':
-        try:
-            username = request.form['inputName']
-            password = request.form['inputPassword']
-            email = request.form['inputEmail']
-            try:
-                cursor.execute('DELETE FROM users WHERE name="%s" and email="%s" and password="%s"' % (username, email, password))
-                db.commit()
-            except Exception as e:
-              return(str(e))
-            # print "Registered"
-        except Exception as e:
-          return(str(e))
-    return render_template('delete.html')
+    print("Time to delete")
+    userID = request.cookies.get('Login')
+    print("user in session:" +str(userID))
 
-@app.route("/showSignIn",methods=['POST'])
-def showSignIn():
+    registeredUser = users_repository.get_user_by_id(userID)
+    try:
+        #will need to add deletes to all other tables too
+        cursor.execute('DELETE FROM users WHERE email="%s"' % (registeredUser.email))
+        db.commit()
+    except Exception as e:
+      return(str(e))
+
+    #Same as logout
+    session.pop('Login', None)
+    return redirect(url_for('main'))
 
 
-    if request.method == 'POST':
-        try:
-            email = request.form['inputEmail']
-            password = request.form['inputPassword']
-            cursor.execute("SELECT * FROM users WHERE sex = 'M'")
-            rows=cursor.fetchall()
-        except Exception as e:
-          return(str(e))
+# handle login failed
+@app.errorhandler(401)
+def page_not_found(e):
+    return flask.Response('<p>Login failed</p>')
 
-    return render_template('showSignIn.html')
-
-@app.route("/showUsers")
-def showUsers():
-    return render_template('showUser.html')
-
-@app.route("/showMen",methods=['GET'])
-def showMen():
-    if request.method == 'GET':
-        try:
-            #CHANGE QUERY TO MATCH DATABASE
-            cursor.execute("SELECT * FROM users WHERE sex = 'M'")
-            rows=cursor.fetchall()
-        except Exception as e:
-          return(str(e))
-
-    return render_template('showMen.html', data=rows)
-
-@app.route("/showWomen",methods=['GET'])
-def showWomen():
-    if request.method == 'GET':
-        try:
-            #CHANGE QUERE TO MATCH DATABASE
-            cursor.execute("SELECT * FROM users WHERE sex = 'F'")
-            rows=cursor.fetchall()
-        except Exception as e:
-          return(str(e))
-
-    return render_template('showWomen.html', data=rows)
+# callback to reload the user object
+@login_manager.user_loader
+def load_user(userid):
+    return users_repository.get_user_by_id(userid)
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8082)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
     # app.run()
