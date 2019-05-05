@@ -250,7 +250,12 @@ def showMatches():
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
             try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+                ptsoy_query = "SELECT prospecting_id FROM yeses_tbl WHERE viewed__id = {}".format(userID)
+                pyso_query = "SELECT viewed__id FROM yeses_tbl WHERE prospecting_id = {}".format(userID)
+                matches_query = "{} INTERSECT {}".format(ptsoy_query, pyso_query)
+                matches_view_stmt = "CREATE VIEW matches AS {}".format(matches_query)
+                cursor.execute(matches_view_stmt)
+                cursor.execute("SELECT * FROM matches")
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
@@ -258,7 +263,12 @@ def showMatches():
         elif pref=='straight' and gender.lower()=='m':
             genderPref='Women'
             try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+                ptsoy_query = "SELECT prospecting_id FROM yeses_tbl WHERE viewed__id = {}".format(userID)
+                pyso_query = "SELECT viewed__id FROM yeses_tbl WHERE prospecting_id = {}".format(userID)
+                matches_query = "{} INTERSECT {}".format(ptsoy_query, pyso_query)
+                matches_view_stmt = "CREATE VIEW matches AS {}".format(matches_query)
+                cursor.execute(matches_view_stmt)
+                cursor.execute("SELECT * FROM matches")
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
