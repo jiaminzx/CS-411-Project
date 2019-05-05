@@ -8,10 +8,11 @@ from flask_login import LoginManager , login_required , UserMixin , login_user
 from helper_functions import User , UsersRepository, getName, getPrefandGen
 
 #Use this line for cPanel
-# db = mariadb.connect(user='root', password='password', database='m2z2')
+db = mariadb.connect(user='pickles249_admin', password='csProject411!', database='pickles249_test')
 #Use this line for VM
-db = mariadb.connect(user='root', password='password',database='m2z2')
-# db = mariadb.connect(user='user', password='password',database='m2z2')
+#db = mariadb.connect(user='root', password='password',database='m2z2')
+#Use this lien for local dev
+#db = mariadb.connect(user='username', password='password',database='m2z2')
 
 cursor = db.cursor(buffered= True)
 
@@ -50,7 +51,7 @@ def login():
             cursor = db.cursor(buffered= True)
             email = request.form['inputEmail']
             password = request.form['inputPassword']
-            spq = """SELECT userID FROM users WHERE email = %s AND password=%s"""
+            spq = """SELECT userID FROM TABLE_4 WHERE email = %s AND password=%s"""
             cursor.execute(spq, [str(email),str(password)])
             userID=cursor.fetchall()
 
@@ -98,7 +99,7 @@ def userHome():
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
             try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+                cursor.execute("SELECT * FROM TABLE_4 WHERE sex = 'M'")
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
@@ -106,7 +107,7 @@ def userHome():
         elif pref=='straight' and gender.lower()=='m':
             genderPref='Women'
             try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+                cursor.execute("SELECT * FROM TABLE_4 WHERE sex = 'F'")
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
@@ -145,12 +146,12 @@ def adduser():
                 print("Error")
                 error="Your height doesn't fit the range"
             else:
-                cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
+                cursor.execute('SELECT * FROM TABLE_4 WHERE email="%s"' % (email))
                 duplicate_emails=cursor.fetchall()
                 if len(duplicate_emails) != 0:
                     error="Email already in use"
                 else:
-                    cursor.execute("INSERT LOW_PRIORITY INTO users (name, email, password, height, sex, age, education, ethnicity,orientation)"
+                    cursor.execute("INSERT LOW_PRIORITY INTO TABLE_4 (name, email, password, height, sex, age, education, ethnicity,orientation)"
                                    "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(name, email, password, height, sex, age, education, ethnicity,orientation))
                     db.commit()
 
@@ -168,7 +169,7 @@ def moduser():
         try:
             print("Reached")
             email = registeredUser.email
-            cursor.execute('SELECT * FROM users WHERE email="%s"' % (email))
+            cursor.execute('SELECT * FROM TABLE_4 WHERE email="%s"' % (email))
             user_info=cursor.fetchall()
             print("Reached!")
             name = request.form['inputName']
@@ -203,7 +204,7 @@ def moduser():
                 return render_template('modify.html', error="Cannot change heigt to go below 18")
 
             print(name, email, password, height, sex, age, education, ethnicity,orientation)
-            cursor.execute('UPDATE LOW_PRIORITY users SET name="%s", password="%s", height="%s", sex="%s", age="%s", education="%s", ethnicity="%s", orientation="%s" WHERE email="%s"' \
+            cursor.execute('UPDATE LOW_PRIORITY TABLE_4 SET name="%s", password="%s", height="%s", sex="%s", age="%s", education="%s", ethnicity="%s", orientation="%s" WHERE email="%s"' \
              % (name, password, height, sex, age, education, ethnicity, orientation, email))
 
             # cursor.execute('UPDATE LOW_PRIORITY users SET name="%s", height="%s",sex="%s" WHERE email="%s"' % (username, height, sex, email))
@@ -223,7 +224,7 @@ def deluser():
     registeredUser = users_repository.get_user_by_id(userID)
     try:
         #will need to add deletes to all other tables too
-        cursor.execute('DELETE FROM users WHERE email="%s"' % (registeredUser.email))
+        cursor.execute('DELETE FROM TABLE_4 WHERE email="%s"' % (registeredUser.email))
         db.commit()
     except Exception as e:
       return(str(e))
@@ -232,104 +233,104 @@ def deluser():
     session.pop('Login', None)
     return redirect(url_for('main'))
 
-userNum = -1
-@app.route("/swipe", methods = ["POST", "GET"])
-@login_required
-def show_user_queue():
-    n_profiles_to_fetch = 2
-    global userNum
-    userNum = userNum + 1
+# userNum = -1
+# @app.route("/swipe", methods = ["POST", "GET"])
+# @login_required
+# def show_user_queue():
+#     # n_profiles_to_fetch = 2
+#     global userNum
+#     userNum = userNum + 1
 
-    userID = request.cookies.get('Login')
-    print("user in session:" +str(userID))
+#     userID = request.cookies.get('Login')
+#     print("user in session:" +str(userID))
 
-    # CREATE VIEW `view_name` AS SELECT statement
+#     # CREATE VIEW `view_name` AS SELECT statement
 
-    registeredUser = users_repository.get_user_by_id(userID)
-    cursor = db.cursor()
-    name = getName(registeredUser, cursor)
-    rows=[]
-    print(name)
-    if request.method == 'GET':
-        rows=[]
-        cursor = db.cursor()
+#     registeredUser = users_repository.get_user_by_id(userID)
+#     cursor = db.cursor()
+#     name = getName(registeredUser, cursor)
+#     rows=[]
+#     print(name)
+#     if request.method == 'GET':
+#         rows=[]
+#         cursor = db.cursor()
 
-        pref, gender = getPrefandGen(userID, cursor)
+#         pref, gender = getPrefandGen(userID, cursor)
 
-        if pref=='straight' and gender.lower()=='f':
-            genderPref='Men'
-            try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
-                rows=cursor.fetchall()
-            except mysql.connector.Error as error:
-                print("Failed to get record from database: {}".format(error))
+#         if pref=='straight' and gender.lower()=='f':
+#             genderPref='Men'
+#             try:
+#                 cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+#                 rows=cursor.fetchall()
+#             except mysql.connector.Error as error:
+#                 print("Failed to get record from database: {}".format(error))
 
-        elif pref=='straight' and gender.lower()=='m':
-            genderPref='Women'
-            try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
-                rows=cursor.fetchall()
-            except mysql.connector.Error as error:
-                print("Failed to get record from database: {}".format(error))
+#         elif pref=='straight' and gender.lower()=='m':
+#             genderPref='Women'
+#             try:
+#                 cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+#                 rows=cursor.fetchall()
+#             except mysql.connector.Error as error:
+#                 print("Failed to get record from database: {}".format(error))
 
-        return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
+#         return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
 
-    if request.method == 'POST':
-        rows=[]
-        cursor = db.cursor()
+#     if request.method == 'POST':
+#         rows=[]
+#         cursor = db.cursor()
 
-        pref, gender = getPrefandGen(userID, cursor)
+#         pref, gender = getPrefandGen(userID, cursor)
 
-        if pref=='straight' and gender.lower()=='f':
-            genderPref='Men'
-            try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
-                rows=cursor.fetchall()
+#         if pref=='straight' and gender.lower()=='f':
+#             genderPref='Men'
+#             try:
+#                 cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+#                 rows=cursor.fetchall()
 
-                # insert into yeses_tbl
-                decision = request.form["decision"]
-                # decision = request.data
-                print(decision)
-                if decision == "yes":
-                    cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
-                                   "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
-                    db.commit()
+#                 # insert into yeses_tbl
+#                 decision = request.form["decision"]
+#                 # decision = request.data
+#                 print(decision)
+#                 if decision == "yes":
+#                     cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
+#                                    "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
+#                     db.commit()
 
-            except mysql.connector.Error as error:
-                print("Failed to get record from database: {}".format(error))
+#             except mysql.connector.Error as error:
+#                 print("Failed to get record from database: {}".format(error))
 
-        elif pref=='straight' and gender.lower()=='m':
-            genderPref='Women'
-            try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
-                rows=cursor.fetchall()
+#         elif pref=='straight' and gender.lower()=='m':
+#             genderPref='Women'
+#             try:
+#                 cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+#                 rows=cursor.fetchall()
 
-                # insert into yeses_tbl
-                decision = request.form["decision"]
-                print(decision)
-                # print("able to access value in form")
-                if decision == "yes":
-                # quer = "INSERT INTO yeses_tbl (prospecting_id, viewed__id) VALUES ({},{:d})".format(str(userID), rows[userNum - 1][0])
-                    cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
-                                   "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
-                    db.commit()
-            except mysql.connector.Error as error:
-                print("Failed to get record from database: {}".format(error))
-        return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
+#                 # insert into yeses_tbl
+#                 decision = request.form["decision"]
+#                 print(decision)
+#                 # print("able to access value in form")
+#                 if decision == "yes":
+#                 # quer = "INSERT INTO yeses_tbl (prospecting_id, viewed__id) VALUES ({},{:d})".format(str(userID), rows[userNum - 1][0])
+#                     cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
+#                                    "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
+#                     db.commit()
+#             except mysql.connector.Error as error:
+#                 print("Failed to get record from database: {}".format(error))
+#         return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
 
-    # return render_template('possibleMatch.html',name=name)
+#     # return render_template('possibleMatch.html',name=name)
 
-# handle login failed
+# handle failed login
 @app.errorhandler(401)
 def page_not_found(e):
-    return flask.Response('<p>Login failed</p>')
+    return render_template('signIn.html', error="login failed")
 
-# callback to reload the user object
+# Reload function     
 @login_manager.user_loader
 def load_user(userid):
     return users_repository.get_user_by_id(userid)
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
-    # app.run()
+    # app.run(host='sp19-cs411-36.cs.illinois.edu', port=8083)
+    app.run()

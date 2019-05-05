@@ -15,8 +15,8 @@ class User(UserMixin):
     def is_active(self):
         return self.active
 
-    def get_auth_token(self):
-        return make_secure_token(self.email , key='secret_key')
+    # def get_auth_token(self):
+    #     return make_secure_token(self.email , key='secret_key')
 
 class UsersRepository:
 
@@ -40,7 +40,7 @@ class UsersRepository:
         self.users_id_dict.pop(userID)
 
 def getName(registeredUser, cursor):
-        cursor.execute('SELECT name FROM users WHERE email="%s"' % (registeredUser.email))
+        cursor.execute('SELECT name FROM TABLE_4 WHERE email="%s"' % (registeredUser.email))
         names=cursor.fetchall() #should only retrieve one value
         names=re.sub(r'[^\w\s]','',str(names))
         name=names[1:]
@@ -48,13 +48,13 @@ def getName(registeredUser, cursor):
 
 def getPrefandGen(userID, cursor):
         #use of prepared statment
-        spq = """SELECT orientation FROM users WHERE userID= %s"""
+        spq = """SELECT orientation FROM TABLE_4 WHERE userID= %s"""
         cursor.execute(spq, [str(userID)])
         pref=cursor.fetchall()
         pref=re.sub(r'[^\w\s]','',str(pref))
         pref=pref[1:]
 
-        spq="""SELECT sex FROM users WHERE userID= %s"""
+        spq="""SELECT sex FROM TABLE_4 WHERE userID= %s"""
         cursor.execute(spq, [str(userID)])
         gender=cursor.fetchall()
         gender=re.sub(r'[^\w\s]','',str(gender))
