@@ -13,35 +13,42 @@
    <body>
 
          <ul class="nav nav-pills pull-right">
-
-            <li role="presentation" class="active"><a href="#"> View Your Profile </a> | </li>
-            <li role="presentation" ><a href="showDelete"> Delete Account </a> | </li>
-            <li role="presentation" ><a href="showModify"> Edit Profile </a>|</li>
-            <li role="presentation" ><a href="swipe"> Swipe </a>|</li>
-            <li role="presentation" ><a href="logout"> Logout </a></li>
-
+            <li role="presentation" ><a href="userHome"> View Profile </a> | </li>
           </ul>
 
           {% if current_user.is_authenticated %}
-            Hi {{ name }}!
+            Happy Swiping {{ name }}!
           {% endif %}
         <h2>Your matches shown below</h2>
 
          <table border="1" cellpadding="5" cellspacing="5">
                <tbody>
-               {% for item in data %}
+
+                 <td>Name: {{data[i][18]}}</td>
+                  <td>Email: {{data[i][19]}}</td>
+                  <td>Height: {{data[i][7]}}</td>
+                  <td>Sex: {{data[i][15]}}</td>
+
+               <!-- {% for item in data %}
                <tr>
 
-                   <!-- change the form contents to match database -->
                    <td>Name: {{item[18]}}</td>
                     <td>Email: {{item[19]}}</td>
                     <td>Height: {{item[7]}}</td>
                     <td>Sex: {{item[15]}}</td>
 
                </tr>
-               {% endfor %}
+               {% endfor %} -->
                </tbody>
            </table>
+
+           <form action="/swipe" method="post">
+             <button id="btnSignIn" class="btn btn-lg btn-primary btn-success" name="decision" type="submit" value="yes"> Yes </button>
+           </form>
+
+           <form action="/swipe" method="post">
+             <button id="btnSignIn" class="btn btn-lg btn-primary btn-info" name="decision" type="submit" value="no"> No </button>
+           </form>
 
    </body>
 </html>
