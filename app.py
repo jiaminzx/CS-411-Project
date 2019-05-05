@@ -320,10 +320,10 @@ def show_user_queue():
                 decision = request.form["decision"]
                 # decision = request.data
                 print(decision)
-                # if decision == "yes":
-                cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
-                               "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
-                db.commit()
+                if decision == "yes":
+                    cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
+                                   "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
+                    db.commit()
 
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
@@ -338,11 +338,11 @@ def show_user_queue():
                 decision = request.form["decision"]
                 print(decision)
                 # print("able to access value in form")
-                # if decision == "yes
+                if decision == "yes
                 # quer = "INSERT INTO yeses_tbl (prospecting_id, viewed__id) VALUES ({},{:d})".format(str(userID), rows[userNum - 1][0])
-                cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
-                               "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
-                db.commit()
+                    cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
+                                   "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
+                    db.commit()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
         return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
