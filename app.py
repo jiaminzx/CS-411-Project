@@ -335,8 +335,8 @@ def show_user_queue():
                 rows=cursor.fetchall()
 
                 # insert into yeses_tbl
-                # decision = request.form["value"]
-                decision = request.data
+                decision = request.form["value"]
+                # decision = request.data
                 print(decision)
                 # print("able to access value in form")
                 # if decision == "yes
