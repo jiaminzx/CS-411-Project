@@ -293,6 +293,50 @@ def show_user_queue():
                 print("Failed to get record from database: {}".format(error))
         return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
 
+    if request.method == 'POST':
+        rows=[]
+        cursor = db.cursor()
+
+        #use of prepared statment
+        spq = """SELECT orientation FROM users WHERE userID= %s"""
+        cursor.execute(spq, [str(userID)])
+        pref=cursor.fetchall()
+        pref=re.sub(r'[^\w\s]','',str(pref))
+        pref=pref[1:]
+
+        spq="""SELECT sex FROM users WHERE userID= %s"""
+        cursor.execute(spq, [str(userID)])
+        gender=cursor.fetchall()
+        gender=re.sub(r'[^\w\s]','',str(gender))
+        gender=gender[1:]
+
+        if pref=='straight' and gender.lower()=='f':
+            genderPref='Men'
+            try:
+                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+                rows=cursor.fetchall()
+
+                # insert into yeses_tbl
+                decision = request.form["value"]
+                if decision == "yes":
+                    cursor.execute("INSERT INTO yeses_tbl (prospecting_id, viewed__id) %s,%s".format(str(userID), rows[userNum - 1]))
+            except mysql.connector.Error as error:
+                print("Failed to get record from database: {}".format(error))
+
+        elif pref=='straight' and gender.lower()=='m':
+            genderPref='Women'
+            try:
+                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+                rows=cursor.fetchall()
+
+                # insert into yeses_tbl
+                decision = request.form["value"]
+                if decision == "yes":
+                    cursor.execute("INSERT INTO yeses_tbl (prospecting_id, viewed__id) %s,%s".format(str(userID), rows[userNum - 1]))
+            except mysql.connector.Error as error:
+                print("Failed to get record from database: {}".format(error))
+        return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
+
     # return render_template('possibleMatch.html',name=name)
 
 # handle login failed
