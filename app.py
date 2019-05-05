@@ -41,7 +41,7 @@ class UsersRepository:
     def __init__(self):
         self.users = dict()
         self.users_id_dict = dict()
-        self.identifier = 0
+        self.id = 0
     
     def save_user(self, user):
         self.users_id_dict.setdefault(user.id, user)
@@ -53,9 +53,8 @@ class UsersRepository:
     def get_user_by_id(self, userid):
         return self.users_id_dict.get(userid)
     
-    def next_index(self):
-        self.identifier +=1
-        return self.identifier
+    def remove_user(self,userID):
+        self.users_id_dict.pop(userID)
 
 users_repository = UsersRepository()
 
@@ -105,22 +104,6 @@ def login():
         except Exception as e:
             return(str(e))
     return render_template('signIn.html',error=error)
-   
-@app.route('/logout')
-def logout():
-    # remove the username from the session if it's there
-    session.pop('Login', None)
-    return redirect(url_for('main'))
-
-@app.route('/showDelete')
-def delete():
-    return render_template('delete.html')
-
-@app.route('/showSignUp/handle_data', methods=['POST'])
-def handle_data():
-    # print "HEEEEEEERE"
-    if request.method == 'POST':
-        projectpath = request.form['projectFilepath']
 
 @app.route("/userHome",methods=['GET','POST'])
 @login_required
@@ -128,6 +111,9 @@ def userHome():
     
     userID = request.cookies.get('Login')
     print("user in session:" +str(userID))
+
+    # CREATE VIEW `view_name` AS SELECT statement
+
     registeredUser = users_repository.get_user_by_id(userID)
     name=registeredUser.username
     print(name)
@@ -166,6 +152,23 @@ def userHome():
         return render_template('userHome.html', data=rows,name=name)
     
     return render_template('userHome.html',name=name)     
+
+
+@app.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('Login', None)
+    return redirect(url_for('main'))
+
+@app.route('/showDelete')
+def delete():
+    return render_template('delete.html')
+
+@app.route('/showSignUp/handle_data', methods=['POST'])
+def handle_data():
+    # print "HEEEEEEERE"
+    if request.method == 'POST':
+        projectpath = request.form['projectFilepath']
 
 
 @app.route('/showSignUp', methods=['POST'])
