@@ -169,30 +169,30 @@ def userHome():
             return(str(e))
     return render_template('userHome.html',name=name)     
 
-@app.route("/showMatches",methods=['GET','POST'])
-@login_required
-def showMatches():
-    #Grab userID from existing session
-    userID = request.cookies.get('Login')
-    print("user in session:" +str(userID))
-    if request.method == 'GET':
-        try:
-            rows=[]
-            cursor = db.cursor()
-            # use of prepared statment to find orientation/gender and what we should display
+# @app.route("/showMatches",methods=['GET','POST'])
+# @login_required
+# def showMatches():
+#     #Grab userID from existing session
+#     userID = request.cookies.get('Login')
+#     print("user in session:" +str(userID))
+#     if request.method == 'GET':
+#         try:
+#             rows=[]
+#             cursor = db.cursor()
+#             # use of prepared statment to find orientation/gender and what we should display
             
 
-            create_view="""CREATE VIEW AS """
+#             create_view="""CREATE VIEW AS """
 
-            people_that_swiped_on_you="""SELECT users.userID FROM users JOIN yeses_tbl ON users.userID=yeses_tbl.prospecting_id AND %s=yeses_tbl.prospecting_id;"""
-            cursor.execute(spq, [str(userID)])
-            ptsoy=cursor.fetchall()
+#             people_that_swiped_on_you="""SELECT users.userID FROM users JOIN yeses_tbl ON users.userID=yeses_tbl.prospecting_id AND %s=yeses_tbl.prospecting_id;"""
+#             cursor.execute(spq, [str(userID)])
+#             ptsoy=cursor.fetchall()
 
-            people_you_swiped_on = """SELECT users.userID FROM users JOIN yeses_tbl ON users.userID=yeses_tbl.prospecting_id AND %s=yeses_tbl.viewed__id;"""
-            cursor.execute(spq, [str(userID)])
-            pyso=cursor.fetchall()
+#             people_you_swiped_on = """SELECT users.userID FROM users JOIN yeses_tbl ON users.userID=yeses_tbl.prospecting_id AND %s=yeses_tbl.viewed__id;"""
+#             cursor.execute(spq, [str(userID)])
+#             pyso=cursor.fetchall()
 
-            #use sql union 
+#             #use sql union 
                     
 
 
