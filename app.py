@@ -209,7 +209,7 @@ def adduser():
                 if len(duplicate_emails) != 0:
                     error="Email already in use"
                 else:
-                    cursor.execute("INSERT LOW_PRIORITY INTO TABLE5 (name, email, password, height, sex, age, education, ethnicity,orientation)"
+                    cursor.execute("INSERT LOW_PRIORITY INTO TABLE5 (name, email, password, height, sex, age, education, ethnicity, orientation)"
                                    "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(name, email, password, height, sex, age, education, ethnicity,orientation))
                     db.commit()
 
