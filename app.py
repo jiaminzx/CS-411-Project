@@ -254,12 +254,12 @@ def showMatches():
                 ptsoy_query = "SELECT prospecting_id AS ptsoy FROM yeses_tbl as yeses1 WHERE viewed__id = {}".format(userID)
                 pyso_query = "SELECT viewed__id AS pyso FROM yeses_tbl as yeses2 WHERE prospecting_id = {}".format(userID)
                 # matches_query = "{} INTERSECT {}".format(ptsoy_query, pyso_query)
-                ptsoy_pyso_intersect = "SELECT DISTINCT ptsoy FROM ({}) AS matches_ids WHERE prospecting_id IN ({})".format(
+                ptsoy_pyso_intersect = "SELECT DISTINCT ptsoy FROM ({}) AS matches_ids WHERE ptsoy IN ({})".format(
                     ptsoy_query, pyso_query
                 )
                 matches_view_stmt = "CREATE VIEW matches AS {}".format(ptsoy_pyso_intersect)
                 cursor.execute(matches_view_stmt)
-                cursor.execute("SELECT * FROM users WHERE userID IN matches")
+                cursor.execute("SELECT * FROM users AS match_profiles WHERE userID IN (SELECT * FROM matches)")
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
