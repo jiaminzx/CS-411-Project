@@ -1,10 +1,11 @@
-
+import re
+import mysql.connector as mariadb
 from flask import Flask, render_template, json, jsonify, request
 from flask import flash, redirect, session, abort,url_for, make_response
 from flask_login import LoginManager , login_required , UserMixin , login_user
-import re
-#import MySQL
-import mysql.connector as mariadb
+
+
+from helper_functions import User , UsersRepository, getName, getPrefandGen
 
 #Use this line for cPanel
 # db = mariadb.connect(user='root', password='password', database='m2z2')
@@ -21,43 +22,6 @@ app.config['SECRET_KEY'] = 'secret_key'
 login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
-
-class User(UserMixin):
-    def __init__(self , email , password , id , active=True):
-        self.id = id
-        self.email = email
-        self.password = password
-        self.active = active
-
-    def get_id(self):
-        return self.id
-
-    def is_active(self):
-        return self.active
-
-    def get_auth_token(self):
-        return make_secure_token(self.email , key='secret_key')
-
-class UsersRepository:
-
-    def __init__(self):
-        self.users = dict()
-        self.users_id_dict = dict()
-        self.id = 0
-
-    def save_user(self, user):
-        self.users_id_dict.setdefault(user.id, user)
-
-        self.users.setdefault(user.email, user)
-
-    def get_user(self, email):
-        return self.users.get(email)
-
-    def get_user_by_id(self, userid):
-        return self.users_id_dict.get(userid)
-
-    def remove_user(self,userID):
-        self.users_id_dict.pop(userID)
 
 users_repository = UsersRepository()
 
@@ -93,7 +57,6 @@ def login():
             print(userID)
             userID=re.sub(r'[^\w\s]','',str(userID))
 
-            # print(userID)
             new_user = User(email , password , userID)
             users_repository.save_user(new_user)
 
@@ -125,28 +88,12 @@ def userHome():
     # CREATE VIEW `view_name` AS SELECT statement
 
     registeredUser = users_repository.get_user_by_id(userID)
-    print(registeredUser.email)
-    rows=[]
     cursor = db.cursor()
-    cursor.execute('SELECT name FROM users WHERE email="%s"' % (registeredUser.email))
-    names=cursor.fetchall() #should only retrieve one value
-    names=re.sub(r'[^\w\s]','',str(names))
-    name=names[1:]
+    name = getName(registeredUser, cursor)
+    rows=[]
     print(name)
     if request.method == 'GET':
-
-        #use of prepared statment
-        spq = """SELECT orientation FROM users WHERE userID= %s"""
-        cursor.execute(spq, [str(userID)])
-        pref=cursor.fetchall()
-        pref=re.sub(r'[^\w\s]','',str(pref))
-        pref=pref[1:]
-
-        spq="""SELECT sex FROM users WHERE userID= %s"""
-        cursor.execute(spq, [str(userID)])
-        gender=cursor.fetchall()
-        gender=re.sub(r'[^\w\s]','',str(gender))
-        gender=gender[1:]
+        pref, gender = getPrefandGen(userID, cursor)
 
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
@@ -299,30 +246,15 @@ def show_user_queue():
     # CREATE VIEW `view_name` AS SELECT statement
 
     registeredUser = users_repository.get_user_by_id(userID)
-    print(registeredUser.email)
-    rows=[]
     cursor = db.cursor()
-    cursor.execute('SELECT name FROM users WHERE email="%s"' % (registeredUser.email))
-    names=cursor.fetchall() #should only retrieve one value
-    names=re.sub(r'[^\w\s]','',str(names))
-    name=names[1:]
+    name = getName(registeredUser, cursor)
+    rows=[]
     print(name)
     if request.method == 'GET':
         rows=[]
         cursor = db.cursor()
 
-        #use of prepared statment
-        spq = """SELECT orientation FROM users WHERE userID= %s"""
-        cursor.execute(spq, [str(userID)])
-        pref=cursor.fetchall()
-        pref=re.sub(r'[^\w\s]','',str(pref))
-        pref=pref[1:]
-
-        spq="""SELECT sex FROM users WHERE userID= %s"""
-        cursor.execute(spq, [str(userID)])
-        gender=cursor.fetchall()
-        gender=re.sub(r'[^\w\s]','',str(gender))
-        gender=gender[1:]
+        pref, gender = getPrefandGen(userID, cursor)
 
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
@@ -339,25 +271,14 @@ def show_user_queue():
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
-                
+
         return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
 
     if request.method == 'POST':
         rows=[]
         cursor = db.cursor()
 
-        #use of prepared statment
-        spq = """SELECT orientation FROM users WHERE userID= %s"""
-        cursor.execute(spq, [str(userID)])
-        pref=cursor.fetchall()
-        pref=re.sub(r'[^\w\s]','',str(pref))
-        pref=pref[1:]
-
-        spq="""SELECT sex FROM users WHERE userID= %s"""
-        cursor.execute(spq, [str(userID)])
-        gender=cursor.fetchall()
-        gender=re.sub(r'[^\w\s]','',str(gender))
-        gender=gender[1:]
+        pref, gender = getPrefandGen(userID, cursor)
 
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
