@@ -8,7 +8,8 @@ import mysql.connector as mariadb
 
 #Use this line for cPanel
 # db = mariadb.connect(user='root', password='password', database='m2z2')
-#Use this line for VM
+
+#Use this line for Local Dev
 db = mariadb.connect(user='user', password='password',database='m2z2')
 cursor = db.cursor(buffered= True)
 
@@ -33,8 +34,8 @@ class User(UserMixin):
     def is_active(self):
         return self.active
 
-    def get_auth_token(self):
-        return make_secure_token(self.username , key='secret_key')
+    # def get_auth_token(self):
+    #     return make_secure_token(self.username , key='secret_key')
 
 class UsersRepository:
 
@@ -93,7 +94,7 @@ def login():
             users_repository.save_user(new_user)
             registeredUser = users_repository.get_user(username)
 
-
+            # #debugging
             # print('Users '+ str(users_repository.users))
             # print('Register user %s , password %s' % (registeredUser.username, registeredUser.password))
             
@@ -129,48 +130,47 @@ def userHome():
     name=registeredUser.username
     print(name)
     if request.method == 'GET':
-        rows=[]
-        cursor = db.cursor()
+        try:
+            rows=[]
+            cursor = db.cursor()
 
-        # use of prepared statment to find orientation/gender and what we should display
-        spq = """SELECT orientation FROM users WHERE userID= %s"""
-        cursor.execute(spq, [str(userID)])
-        pref=cursor.fetchall()
-        pref=re.sub(r'[^\w\s]','',str(pref))
-        pref=pref[1:]
-       
-        spq="""SELECT sex FROM users WHERE userID= %s"""
-        cursor.execute(spq, [str(userID)])
-        gender=cursor.fetchall()
-        gender=re.sub(r'[^\w\s]','',str(gender))
-        gender=gender[1:]
-       
-        # use of gender and orientation to decide what to display 
-        if pref=='straight' and gender.lower()=='f':
-            genderPref='Men'
-            try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
-                rows=cursor.fetchall()
-            except mysql.connector.Error as error:
-                print("Failed to get record from database: {}".format(error))
+            # use of prepared statment to find orientation/gender and what we should display
+            spq = """SELECT orientation FROM users WHERE userID= %s"""
+            cursor.execute(spq, [str(userID)])
+            pref=cursor.fetchall()
+            pref=re.sub(r'[^\w\s]','',str(pref))
+            pref=pref[1:]
+        
+            spq="""SELECT sex FROM users WHERE userID= %s"""
+            cursor.execute(spq, [str(userID)])
+            gender=cursor.fetchall()
+            gender=re.sub(r'[^\w\s]','',str(gender))
+            gender=gender[1:]
+        
+            # use of gender and orientation to decide what to display 
+            if (pref=='straight' and gender.lower()=='f') or (pref=='gay' and gender.lower()=='m'):
+                #genderPref='Men'
+                try:
+                    cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+                    rows=cursor.fetchall()
+                except mysql.connector.Error as error:
+                    print("Failed to get record from database: {}".format(error))
 
-        elif pref=='straight' and gender.lower()=='m':
-            genderPref='Women' 
-            try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
-                rows=cursor.fetchall()
-            except mysql.connector.Error as error:
-                print("Failed to get record from database: {}".format(error))
-        return render_template('userHome.html', data=rows,name=name)
-    
+            elif (pref=='straight' and gender.lower()=='m') or (pref=='gay' and gender.lower()=='f'):
+                #genderPref='Women' 
+                try:
+                    cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+                    rows=cursor.fetchall()
+                except mysql.connector.Error as error:
+                    print("Failed to get record from database: {}".format(error))
+            return render_template('userHome.html', data=rows,name=name)
+        #match the try with except
+        except Exception as e:
+            return(str(e))
     return render_template('userHome.html',name=name)     
 
 
-@app.route('/logout')
-def logout():
-    # remove the username from the session if it's there
-    session.pop('Login', None)
-    return redirect(url_for('main'))
+
 
 @app.route('/showDelete')
 def delete():
@@ -183,7 +183,7 @@ def handle_data():
         projectpath = request.form['projectFilepath']
 
 
-@app.route('/showSignUp', methods=['POST'])
+@app.route('/showSignUp', methods=['POST','GET'])
 def adduser():
     #print "adduser Entered"
     if request.method == 'POST':
@@ -256,15 +256,24 @@ def deluser():
     return render_template('delete.html')
 
 
-# handle login failed
+# handle failed login
 @app.errorhandler(401)
 def page_not_found(e):
-    return flask.Response('<p>Login failed</p>')
+    return render_template('signIn.html', error="login failed")
 
-# callback to reload the user object        
+# Reload function     
 @login_manager.user_loader
 def load_user(userid):
     return users_repository.get_user_by_id(userid)
+
+@app.route('/logout')
+@login_required
+def logout():
+    # remove the username from the session if it's there
+    userID = request.cookies.get('Login')
+    session.pop('Login', None)
+    users_repository.remove_user(userID)
+    return redirect(url_for('main'))
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
