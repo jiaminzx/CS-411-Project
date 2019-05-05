@@ -232,6 +232,40 @@ def deluser():
     session.pop('Login', None)
     return redirect(url_for('main'))
 
+@app.route("/showMatches")
+def showMatches():
+    userID = request.cookies.get('Login')
+    print("user in session:" +str(userID))
+
+    # CREATE VIEW `view_name` AS SELECT statement
+
+    registeredUser = users_repository.get_user_by_id(userID)
+    cursor = db.cursor()
+    name = getName(registeredUser, cursor)
+    rows=[]
+    print(name)
+    if request.method == 'GET':
+        pref, gender = getPrefandGen(userID, cursor)
+
+        if pref=='straight' and gender.lower()=='f':
+            genderPref='Men'
+            try:
+                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+                rows=cursor.fetchall()
+            except mysql.connector.Error as error:
+                print("Failed to get record from database: {}".format(error))
+
+        elif pref=='straight' and gender.lower()=='m':
+            genderPref='Women'
+            try:
+                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+                rows=cursor.fetchall()
+            except mysql.connector.Error as error:
+                print("Failed to get record from database: {}".format(error))
+        return render_template('userHome.html', data=rows,name=name)
+
+    return render_template('userHome.html',name=name)
+
 userNum = -1
 @app.route("/swipe", methods = ["POST", "GET"])
 @login_required
