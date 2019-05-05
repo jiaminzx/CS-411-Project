@@ -252,9 +252,13 @@ def showMatches():
             try:
                 # "SELECT DISTINCT ptsoy FROM (SELECT prospecting_id AS ptsoy FROM yeses_tbl as yeses1 WHERE viewed__id = 6) AS matches_ids WHERE ptsoy IN (SELECT viewed__id AS pyso FROM yeses_tbl as yeses2 WHERE prospecting_id = 6)"
                 ptsoy_query = "SELECT prospecting_id AS ptsoy FROM yeses_tbl as yeses1 WHERE viewed__id = {}".format(userID)
+                ptsoy_view = "CREATE VIEW ptsoy AS {}".format(ptsoy_query)
+                cursor.execute(ptsoy_view)
                 pyso_query = "SELECT viewed__id AS pyso FROM yeses_tbl as yeses2 WHERE prospecting_id = {}".format(userID)
+                pyso_view = "CREATE VIEW pyso AS {}".format(pyso_query)
+                cursor.execute(pyso_view)
                 # matches_query = "{} INTERSECT {}".format(ptsoy_query, pyso_query)
-                ptsoy_pyso_intersect = "SELECT DISTINCT ptsoy FROM ({}) AS matches_ids WHERE ptsoy IN ({})".format(
+                ptsoy_pyso_intersect = "SELECT DISTINCT prospecting_id FROM ptsoy AS matches_ids WHERE prospecting_id IN pyso".format(
                     ptsoy_query, pyso_query
                 )
                 matches_view_stmt = "CREATE VIEW matches AS {}".format(ptsoy_pyso_intersect)
