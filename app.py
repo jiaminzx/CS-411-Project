@@ -339,6 +339,7 @@ def show_user_queue():
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
+                
         return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
 
     if request.method == 'POST':
