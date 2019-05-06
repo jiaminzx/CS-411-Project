@@ -73,12 +73,9 @@ y = df.loc[:,['match']].values
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=42)
 
-logistic = cclf = CalibratedClassifierCV(base_estimator=LinearSVC(penalty='l2', dual=False), cv=5)
+logistic =CalibratedClassifierCV(base_estimator=LinearSVC(penalty='l2', dual=False), cv=5)
 pca = PCA()
-pipe = Pipeline(steps=[('pca', pca), ('logistic', logistic)])
-
-
-# Parameters of pipelines can be set using ‘__’ separated parameter names:
+pipe =Pipeline(steps=[('pca', pca), ('logistic', logistic)])
 param_grid = {
     'pca__n_components': [1,2,3,4,5],
 }
