@@ -283,7 +283,7 @@ def showMatches():
             # cursor.execute("DROP VIEW matches_view")
 
             matches_query = "select YT1.prospecting_id from yeses_tbl as YT1 where YT1.viewed__id = {} and  YT1.prospecting_id IN (select YT2.viewed__id from yeses_tbl as YT2 where YT2.prospecting_id = {})".format(userID, userID)
-            cursor.execute(matches_query)
+            cursor.execute("select * from users where userID in {}".format(matches_query))
             rows = cursor.fetchall()
         except mysql.connector.Error as error:
             print("Failed to get record from database: {}".format(error))
