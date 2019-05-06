@@ -390,6 +390,18 @@ def show_user_queue():
         return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
 
     # return render_template('possibleMatch.html',name=name)
+@app.route("/message", methods = ["POST", "GET"])
+@login_required
+def messaging():
+    if request.method == 'GET':
+        print('Get')
+
+    if request.method == 'POST':
+        print('Post')
+        recipient = request.form["recipient"]
+        print('Want to message ', recipient)
+
+    return redirect(url_for('showMatches'))
 
 # handle login failed
 @app.errorhandler(401)
