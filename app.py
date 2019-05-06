@@ -4,11 +4,6 @@ from flask import Flask, render_template, json, jsonify, request
 from flask import flash, redirect, session, abort,url_for, make_response
 from flask_login import LoginManager , login_required , UserMixin , login_user
 
-# cursor.execute(" drop trigger if exists mytrigger")
-# qrystr = "CREATE TRIGGER HeightReset BEFORE UPDATE ON users FOR EACH ROW BEGIN IF NEW.height < 0 OR NEW.height > 108 THEN SET NEW.height = OLD.height; END IF; END"
-# cursor.execute(qrystr)
-# db.commit()
-
 class User(UserMixin):
     def __init__(self , email , password , id , active=True):
         self.id = id
@@ -74,8 +69,11 @@ def getPrefandGen(userID, cursor):
 #Use this line for VM
 db = mariadb.connect(user='root', password='password',database='m2z2')
 # db = mariadb.connect(user='user', password='password',database='m2z2')
-
 cursor = db.cursor(buffered= True)
+# cursor.execute(" drop trigger if exists mytrigger")
+# qrystr = "CREATE TRIGGER HeightReset BEFORE UPDATE ON users FOR EACH ROW BEGIN IF NEW.height < 0 OR NEW.height > 108 THEN SET NEW.height = OLD.height; END IF; END"
+# cursor.execute(qrystr)
+# db.commit()
 
 #db.close() needs to be called to close connection
 app = Flask(__name__)
@@ -331,7 +329,8 @@ def show_user_queue():
         if pref=='straight' and gender.lower()=='f':
             genderPref='Men'
             try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+                # cursor.execute("SELECT * FROM users WHERE sex = 'M'")
+                cursor.execute('SELECT * FROM users where users.sex = "M" and NOT EXISTS(select * from yeses_tbl where yeses_tbl.viewed__id = users.userID and yeses_tbl.prospecting_id = "%s"' % (userID));
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
@@ -339,7 +338,8 @@ def show_user_queue():
         elif pref=='straight' and gender.lower()=='m':
             genderPref='Women'
             try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+                # cursor.execute("SELECT * FROM users WHERE sex = 'F'")
+                cursor.execute('SELECT * FROM users where users.sex = "F" and NOT EXISTS(select * from yeses_tbl where yeses_tbl.viewed__id = users.userID and yeses_tbl.prospecting_id = "%s"' % (userID));
                 rows=cursor.fetchall()
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
@@ -429,7 +429,7 @@ def showMessages():
 
     if request.method == 'GET':
         try:
-            cursor.execute("SELECT * FROM messages_tbl WHERE sender_id = %s OR sender_id = %s ORDER BY time", (userID,recipient))
+            cursor.execute("SELECT users.name, messages_tbl.sender_id, messages_tbl.recipient_id, messages_tbl.time, messages_tbl.text FROM messages_tbl INNER JOIN users ON users.userID = messages_tbl.sender_id WHERE messages_tbl.sender_id = %s OR messages_tbl.sender_id = %s ORDER BY time", (userID,recipient))
             rows=cursor.fetchall()
         except Exception as e:
           return(str(e))
