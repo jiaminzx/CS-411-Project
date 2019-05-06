@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+    <head>
+        <title>m2z2</title>
+
+
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="../static/signup.css" rel="stylesheet">
+
+      </head>
+   <body>
+     <ul class="nav nav-pills pull-right">
+
+        <li role="presentation" class="active"><a href="#"> View Your Profile </a> | </li>
+        <li role="presentation" ><a href="showDelete"> Delete Account </a> | </li>
+        <li role="presentation" ><a href="showModify"> Edit Profile </a>|</li>
+        <li role="presentation" ><a href="swipe"> Swipe </a>|</li>
+        <li role="presentation" ><a href="showMatches"> See Matches </a>|</li>
+        <li role="presentation" ><a href="logout"> Logout </a></li>
+
+      </ul>
+      <table border="1" cellpadding="5" cellspacing="5">
+            <tbody>
+            {% for item in data %}
+            <tr>
+
+                <!-- change the form contents to match database -->
+                <td>Name: {{item[18]}}</td>
+                 <td>Email: {{item[19]}}</td>
+                 <td>Height: {{item[7]}}</td>
+                 <td>Sex: {{item[15]}}</td>
+
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+          <div class="jumbotron">
+            <h1>Fill out your information below:</h1>
+            <form action="{{ url_for('addMessage') }}" method="post">
+
+              <label for="recipient_id" class="sr-only">Recipient</label>
+              <input type="name" name="recipient_id" id="recipient_id " class="form-control" placeholder="choose recipient from above matches" required autofocus>
+
+              <label for="text" class="sr-only">Message</label>
+              <input type="name" name="text" id="text" class="form-control" placeholder="Message" required>
+
+              <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Send Message</button>
+            </form>
+
+
+            <form action="{{ url_for('showMsg') }}" method="get">
+            <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Show Message</button>
+            </form>
+          </div>
+
+   </body>
+</html>

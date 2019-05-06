@@ -289,6 +289,38 @@ def deluser():
     session.pop('Login', None)
     return redirect(url_for('main'))
 
+@app.route('/showMessage')
+def showMessage():
+    return render_template('messages.html')
+
+@app.route("/showMsg",methods=['GET'])
+def showMsg():
+    if request.method == 'GET':
+        try:
+            #CHANGE QUERY TO MATCH DATABASE
+            sender = request.cookies.get('Login')
+            cursor.execute("SELECT * FROM messages_tbl WHERE sender_id = %s OR sender_id = %s ORDER BY time", (sender,recipient))
+            rows=cursor.fetchall()
+        except Exception as e:
+          return(str(e))
+
+    return render_template('showMsg.html', data=rows)
+
+@app.route('/showMessage', methods=['POST'])
+def addMessage():
+    if request.method == 'POST':
+        try:
+            global recipient
+            sender = request.cookies.get('Login')
+            # sender = request.form['sender_id']
+            recipient = request.form['recipient_id']
+            msg = request.form['text']
+            cursor.execute("INSERT LOW_PRIORITY INTO  messages_tbl (sender_id, recipient_id, text) VALUES (%s,%s, %s)",(sender,recipient,msg))
+            db.commit()
+        except Exception as e:
+          return(str(e))
+    return render_template('messages.html')
+
 @app.route("/showMatches", methods = ['GET'])
 def showMatches():
     userID = request.cookies.get('Login')
@@ -349,7 +381,7 @@ def showMatches():
     #         rows = cursor.fetchall()
     #     except mysql.connector.Error as error:
     #         print("Failed to get record from database: {}".format(error))
-        return render_template('userHome.html', data=rows,name=name)
+        return render_template('messages.html', data=rows,name=name)
 
     # return render_template('userHome.html',name=name)
 
