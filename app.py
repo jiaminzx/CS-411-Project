@@ -282,7 +282,11 @@ def showMatches():
             # cursor.execute("DROP VIEW pyso_view")
             # cursor.execute("DROP VIEW matches_view")
 
-            matches_query = "select YT1.prospecting_id from yeses_tbl as YT1 where YT1.viewed__id = {} and  YT1.prospecting_id IN (select YT2.viewed__id from yeses_tbl as YT2 where YT2.prospecting_id = {})".format(userID, userID)
+            pyso_query = "select YT2.viewed__id from yeses_tbl as YT2 where YT2.prospecting_id = {}".format(userID)
+            cursor.execute("CREATE OR REPLACE VIEW pyso_view AS {}".format(pyso_query))
+            print("created pyso view")
+
+            matches_query = "select YT1.prospecting_id from yeses_tbl as YT1 where YT1.viewed__id = {} and YT1.prospecting_id IN pyso_view".format(userID)
             cursor.execute("select * from users where userID in ({})".format(matches_query))
             rows = cursor.fetchall()
         except mysql.connector.Error as error:
