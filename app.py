@@ -408,6 +408,10 @@ def messaging():
 
     return redirect(url_for('showMessages', sender=userID, recipient=recipient))
 
+@app.route("/sendMessage")
+def sendMessage():
+    return render_template('messages.html')
+
 @app.route("/showMessages",methods=['GET', 'POST'])
 def showMessages():
 
@@ -436,19 +440,19 @@ def showMessages():
 
     return render_template('showMsg.html', data=rows)
 
-@app.route('/showMessage', methods=['POST'])
-def addMessage():
-    if request.method == 'POST':
-        try:
-            global sender, recipient
-            sender = request.form['sender_id']
-            recipient = request.form['recipient_id']
-            msg = request.form['text']
-            cursor.execute("INSERT LOW_PRIORITY INTO  messages_tbl (sender_id, recipient_id, text) VALUES (%s,%s, %s)",(sender,recipient,msg))
-            db.commit()
-        except Exception as e:
-          return(str(e))
-    return render_template('messages.html')
+# @app.route('/showMessage', methods=['POST'])
+# def addMessage():
+#     if request.method == 'POST':
+#         try:
+#             global sender, recipient
+#             sender = request.form['sender_id']
+#             recipient = request.form['recipient_id']
+#             msg = request.form['text']
+#             cursor.execute("INSERT LOW_PRIORITY INTO  messages_tbl (sender_id, recipient_id, text) VALUES (%s,%s, %s)",(sender,recipient,msg))
+#             db.commit()
+#         except Exception as e:
+#           return(str(e))
+#     return render_template('messages.html')
 
 # handle login failed
 @app.errorhandler(401)
@@ -462,5 +466,5 @@ def load_user(userid):
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8082)
     # app.run()
