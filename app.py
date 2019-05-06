@@ -452,5 +452,5 @@ def load_user(userid):
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
+    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8040)
     # app.run()
