@@ -4,11 +4,6 @@ from flask import Flask, render_template, json, jsonify, request
 from flask import flash, redirect, session, abort,url_for, make_response
 from flask_login import LoginManager , login_required , UserMixin , login_user
 
-# cursor.execute(" drop trigger if exists mytrigger")
-# qrystr = "CREATE TRIGGER HeightReset BEFORE UPDATE ON users FOR EACH ROW BEGIN IF NEW.height < 0 OR NEW.height > 108 THEN SET NEW.height = OLD.height; END IF; END"
-# cursor.execute(qrystr)
-# db.commit()
-
 class User(UserMixin):
     def __init__(self , email , password , id , active=True):
         self.id = id
@@ -74,8 +69,11 @@ def getPrefandGen(userID, cursor):
 #Use this line for VM
 db = mariadb.connect(user='root', password='password',database='m2z2')
 # db = mariadb.connect(user='user', password='password',database='m2z2')
-
 cursor = db.cursor(buffered= True)
+cursor.execute(" drop trigger if exists HeightReset")
+qry = "CREATE TRIGGER HeightReset BEFORE UPDATE ON users FOR EACH ROW BEGIN IF NEW.height < 0 OR NEW.height > 108 THEN SET NEW.height = OLD.height; END IF; END"
+cursor.execute(qry)
+db.commit()
 
 #db.close() needs to be called to close connection
 app = Flask(__name__)
@@ -349,7 +347,7 @@ def showMatches():
     #         rows = cursor.fetchall()
     #     except mysql.connector.Error as error:
     #         print("Failed to get record from database: {}".format(error))
-        return render_template('userHome.html', data=rows,name=name)
+        return render_template('matches.html', data=rows,name=name)
 
     # return render_template('userHome.html',name=name)
 
