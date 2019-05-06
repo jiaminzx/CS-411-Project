@@ -93,6 +93,7 @@ login_manager.init_app(app)
 users_repository = UsersRepository()
 
 
+
 @app.route("/")
 def main():
     return render_template('home.html')
@@ -321,10 +322,15 @@ def show_user_queue():
     global userNum
     userNum = userNum + 1
 
+    #load the model
+    model=joblib.load('model.sav')
+
     userID = request.cookies.get('Login')
     print("user in session:" +str(userID))
 
     metric=0
+    def predictions(array):
+        return model.predict([array])
     
    
     registeredUser = users_repository.get_user_by_id(userID)
@@ -346,6 +352,92 @@ def show_user_queue():
                 cursor.execute("SELECT * FROM users WHERE sex = 'M'")
                 rows=cursor.fetchall()
 
+                matchn= rows[userNum][0]
+                print(str(matchn)+"in get straight f")
+                cursor.execute("SELECT age, ethnicity, job, income FROM users WHERE userID = %s", [str(userID)])
+                rows1=cursor.fetchall()
+
+                cursor.execute("SELECT age, ethnicity FROM users WHERE userID = %s", [str(matchn)])
+                rows=cursor.fetchall()
+
+                age=rows1[0][0]
+                race=rows1[0][1]
+                race=re.sub(r'[^\w\s]','',str(race))
+                job=rows1[0][2]
+                inc=rows1[0][3]
+                race=race.lower()
+                age2=rows[0][0]
+                race2=rows[0][1]
+                race2=re.sub(r'[^\w\s]','',str(race2))
+                race2=race2.lower()
+                if inc==None:
+                    inc=-1
+                if age2==None:
+                    age2=18
+                if race2!=race2:
+                    race2=6
+                if race!=race:
+                    race=6
+                if job==None:
+                    job=18
+                if age!=age:
+                    age=18
+                
+                # races={}
+                # races[1]='Black'
+                # races[2]='White'
+                # races[3]='Latino'
+                # races[4]='Asian'
+                # races[5]='Native American'
+                # races[6]='Other'
+
+                if race[0]=='b':
+                    race=1
+                elif race[0]=='w':
+                    race=2
+                elif race[0]=='l' or race[0]=='h':
+                    race=3
+                elif race[0]=='a' or race[0]=='e':
+                    race=4
+                elif race[0]=='n':
+                    race=5
+                else:
+                    race=6
+
+                if race2[0]=='b':
+                    race2=1
+                elif race2[0]=='w':
+                    race2=2
+                elif race2[0]=='l' or race2[0]=='h':
+                    race2=3
+                elif race2[0]=='a' or race2[0]=='e':
+                    race2=4
+                elif race2[0]=='n':
+                    race2=5
+                else:
+                    race2=6
+
+
+                print(age)
+                print(race)
+                print(job)
+                print(inc)
+                print(age2)
+                print(race2)
+
+                array=[age,race,job,inc,age2,race2]
+                #install joblib on pip 
+
+                metric=predictions(array)
+
+                # insert into yeses_tbl
+                decision = request.form["decision"]
+                # decision = request.data
+                print(decision)
+                if decision == "yes":
+                    cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
+                                   "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
+                    db.commit()
                 
                
 
@@ -359,83 +451,92 @@ def show_user_queue():
                 cursor.execute("SELECT * FROM users WHERE sex = 'F'")
                 rows=cursor.fetchall()
 
-                # matchn= rows[userNum][0]
-                # print(str(matchn)+"in get straight f")
-                # cursor.execute("SELECT age, ethnicity, job, income FROM users WHERE userID = %s", [str(userID)])
-                # rows1=cursor.fetchall()
+                matchn= rows[userNum][0]
+                print(str(matchn)+"in get straight f")
+                cursor.execute("SELECT age, ethnicity, job, income FROM users WHERE userID = %s", [str(userID)])
+                rows1=cursor.fetchall()
 
-                # cursor.execute("SELECT age, ethnicity FROM users WHERE userID = %s", [str(matchn)])
-                # rows=cursor.fetchall()
+                cursor.execute("SELECT age, ethnicity FROM users WHERE userID = %s", [str(matchn)])
+                rows=cursor.fetchall()
 
-                # age=rows1[0][0]
-                # race=rows1[0][1]
-                # race=re.sub(r'[^\w\s]','',str(race))
-                # job=rows1[0][2]
-                # inc=rows1[0][3]
-                # race=race.lower()
-                # age2=rows[0][0]
-                # race2=rows[0][1]
-                # race2=re.sub(r'[^\w\s]','',str(race2))
-                # race2=race2.lower()
-                # if inc==None:
-                #     inc=-1
-                # if age2==None:
-                #     age2=18
-                # if race2!=race2:
-                #     race2=6
-                # if race!=race:
-                #     race=6
-                # if job==None:
-                #     job=18
-                # if age!=age:
-                #     age=18
+                age=rows1[0][0]
+                race=rows1[0][1]
+                race=re.sub(r'[^\w\s]','',str(race))
+                job=rows1[0][2]
+                inc=rows1[0][3]
+                race=race.lower()
+                age2=rows[0][0]
+                race2=rows[0][1]
+                race2=re.sub(r'[^\w\s]','',str(race2))
+                race2=race2.lower()
+                if inc==None:
+                    inc=-1
+                if age2==None:
+                    age2=18
+                if race2!=race2:
+                    race2=6
+                if race!=race:
+                    race=6
+                if job==None:
+                    job=18
+                if age!=age:
+                    age=18
                 
-                # # races={}
-                # # races[1]='Black'
-                # # races[2]='White'
-                # # races[3]='Latino'
-                # # races[4]='Asian'
-                # # races[5]='Native American'
-                # # races[6]='Other'
+                # races={}
+                # races[1]='Black'
+                # races[2]='White'
+                # races[3]='Latino'
+                # races[4]='Asian'
+                # races[5]='Native American'
+                # races[6]='Other'
 
-                # if race[0]=='b':
-                #     race=1
-                # elif race[0]=='w':
-                #     race=2
-                # elif race[0]=='l' or race[0]=='h':
-                #     race=3
-                # elif race[0]=='a' or race[0]=='e':
-                #     race=4
-                # elif race[0]=='n':
-                #     race=5
-                # else:
-                #     race=6
+                if race[0]=='b':
+                    race=1
+                elif race[0]=='w':
+                    race=2
+                elif race[0]=='l' or race[0]=='h':
+                    race=3
+                elif race[0]=='a' or race[0]=='e':
+                    race=4
+                elif race[0]=='n':
+                    race=5
+                else:
+                    race=6
 
-                # if race2[0]=='b':
-                #     race2=1
-                # elif race2[0]=='w':
-                #     race2=2
-                # elif race2[0]=='l' or race2[0]=='h':
-                #     race2=3
-                # elif race2[0]=='a' or race2[0]=='e':
-                #     race2=4
-                # elif race2[0]=='n':
-                #     race2=5
-                # else:
-                #     race2=6
+                if race2[0]=='b':
+                    race2=1
+                elif race2[0]=='w':
+                    race2=2
+                elif race2[0]=='l' or race2[0]=='h':
+                    race2=3
+                elif race2[0]=='a' or race2[0]=='e':
+                    race2=4
+                elif race2[0]=='n':
+                    race2=5
+                else:
+                    race2=6
 
 
-                # print(age)
-                # print(race)
-                # print(job)
-                # print(inc)
-                # print(age2)
-                # print(race2)
+                print(age)
+                print(race)
+                print(job)
+                print(inc)
+                print(age2)
+                print(race2)
 
-                # array=[age,race,job,inc,age2,race2]
+                array=[age,race,job,inc,age2,race2]
                 #install joblib on pip 
 
                 metric=predictions(array)
+
+                # insert into yeses_tbl
+                decision = request.form["decision"]
+                # decision = request.data
+                print(decision)
+                if decision == "yes":
+                    cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
+                                   "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
+                    db.commit()
 
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
@@ -454,92 +555,92 @@ def show_user_queue():
                 cursor.execute("SELECT * FROM users WHERE sex = 'M'")
                 rows=cursor.fetchall()
 
-                # matchn= rows[userNum][0]
-                # print(str(matchn)+"in get straight f")
-                # cursor.execute("SELECT age, ethnicity, job, income FROM users WHERE userID = %s", [str(userID)])
-                # rows1=cursor.fetchall()
+                matchn= rows[userNum][0]
+                print(str(matchn)+"in get straight f")
+                cursor.execute("SELECT age, ethnicity, job, income FROM users WHERE userID = %s", [str(userID)])
+                rows1=cursor.fetchall()
 
-                # cursor.execute("SELECT age, ethnicity FROM users WHERE userID = %s", [str(matchn)])
-                # rows=cursor.fetchall()
+                cursor.execute("SELECT age, ethnicity FROM users WHERE userID = %s", [str(matchn)])
+                rows=cursor.fetchall()
 
-                # age=rows1[0][0]
-                # race=rows1[0][1]
-                # race=re.sub(r'[^\w\s]','',str(race))
-                # job=rows1[0][2]
-                # inc=rows1[0][3]
-                # race=race.lower()
-                # age2=rows[0][0]
-                # race2=rows[0][1]
-                # race2=re.sub(r'[^\w\s]','',str(race2))
-                # race2=race2.lower()
-                # if inc==None:
-                #     inc=-1
-                # if age2==None:
-                #     age2=18
-                # if race2!=race2:
-                #     race2=6
-                # if race!=race:
-                #     race=6
-                # if job==None:
-                #     job=18
-                # if age!=age:
-                #     age=18
+                age=rows1[0][0]
+                race=rows1[0][1]
+                race=re.sub(r'[^\w\s]','',str(race))
+                job=rows1[0][2]
+                inc=rows1[0][3]
+                race=race.lower()
+                age2=rows[0][0]
+                race2=rows[0][1]
+                race2=re.sub(r'[^\w\s]','',str(race2))
+                race2=race2.lower()
+                if inc==None:
+                    inc=-1
+                if age2==None:
+                    age2=18
+                if race2!=race2:
+                    race2=6
+                if race!=race:
+                    race=6
+                if job==None:
+                    job=18
+                if age!=age:
+                    age=18
                 
-                # # races={}
-                # # races[1]='Black'
-                # # races[2]='White'
-                # # races[3]='Latino'
-                # # races[4]='Asian'
-                # # races[5]='Native American'
-                # # races[6]='Other'
+                # races={}
+                # races[1]='Black'
+                # races[2]='White'
+                # races[3]='Latino'
+                # races[4]='Asian'
+                # races[5]='Native American'
+                # races[6]='Other'
 
-                # if race[0]=='b':
-                #     race=1
-                # elif race[0]=='w':
-                #     race=2
-                # elif race[0]=='l' or race[0]=='h':
-                #     race=3
-                # elif race[0]=='a' or race[0]=='e':
-                #     race=4
-                # elif race[0]=='n':
-                #     race=5
-                # else:
-                #     race=6
+                if race[0]=='b':
+                    race=1
+                elif race[0]=='w':
+                    race=2
+                elif race[0]=='l' or race[0]=='h':
+                    race=3
+                elif race[0]=='a' or race[0]=='e':
+                    race=4
+                elif race[0]=='n':
+                    race=5
+                else:
+                    race=6
 
-                # if race2[0]=='b':
-                #     race2=1
-                # elif race2[0]=='w':
-                #     race2=2
-                # elif race2[0]=='l' or race2[0]=='h':
-                #     race2=3
-                # elif race2[0]=='a' or race2[0]=='e':
-                #     race2=4
-                # elif race2[0]=='n':
-                #     race2=5
-                # else:
-                #     race2=6
+                if race2[0]=='b':
+                    race2=1
+                elif race2[0]=='w':
+                    race2=2
+                elif race2[0]=='l' or race2[0]=='h':
+                    race2=3
+                elif race2[0]=='a' or race2[0]=='e':
+                    race2=4
+                elif race2[0]=='n':
+                    race2=5
+                else:
+                    race2=6
 
 
-                # print(age)
-                # print(race)
-                # print(job)
-                # print(inc)
-                # print(age2)
-                # print(race2)
+                print(age)
+                print(race)
+                print(job)
+                print(inc)
+                print(age2)
+                print(race2)
 
-                # array=[age,race,job,inc,age2,race2]
-                # #install joblib on pip 
+                array=[age,race,job,inc,age2,race2]
+                #install joblib on pip 
 
-                # metric=predictions(array)
+                metric=predictions(array)
 
-                # # insert into yeses_tbl
-                # decision = request.form["decision"]
-                # # decision = request.data
-                # print(decision)
-                # if decision == "yes":
-                #     cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
-                #                    "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
-                #     db.commit()
+                # insert into yeses_tbl
+                decision = request.form["decision"]
+                # decision = request.data
+                print(decision)
+                if decision == "yes":
+                    cursor.execute("INSERT LOW_PRIORITY INTO yeses_tbl (prospecting_id, viewed__id)"
+                                   "VALUES (%s,%s)",(userID, rows[userNum - 1][0]))
+                    db.commit()
 
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
@@ -550,83 +651,83 @@ def show_user_queue():
                 cursor.execute("SELECT * FROM users WHERE sex = 'F'")
                 rows=cursor.fetchall()
 
-                # matchn= rows[userNum][0]
-                # print(str(matchn)+"in get straight f")
-                # cursor.execute("SELECT age, ethnicity, job, income FROM users WHERE userID = %s", [str(userID)])
-                # rows1=cursor.fetchall()
+                matchn= rows[userNum][0]
+                print(str(matchn)+"in get straight f")
+                cursor.execute("SELECT age, ethnicity, job, income FROM users WHERE userID = %s", [str(userID)])
+                rows1=cursor.fetchall()
 
-                # cursor.execute("SELECT age, ethnicity FROM users WHERE userID = %s", [str(matchn)])
-                # rows=cursor.fetchall()
+                cursor.execute("SELECT age, ethnicity FROM users WHERE userID = %s", [str(matchn)])
+                rows=cursor.fetchall()
 
-                # age=rows1[0][0]
-                # race=rows1[0][1]
-                # race=re.sub(r'[^\w\s]','',str(race))
-                # job=rows1[0][2]
-                # inc=rows1[0][3]
-                # race=race.lower()
-                # age2=rows[0][0]
-                # race2=rows[0][1]
-                # race2=re.sub(r'[^\w\s]','',str(race2))
-                # race2=race2.lower()
-                # if inc==None:
-                #     inc=-1
-                # if age2==None:
-                #     age2=18
-                # if race2!=race2:
-                #     race2=6
-                # if race!=race:
-                #     race=6
-                # if job==None:
-                #     job=18
-                # if age!=age:
-                #     age=18
+                age=rows1[0][0]
+                race=rows1[0][1]
+                race=re.sub(r'[^\w\s]','',str(race))
+                job=rows1[0][2]
+                inc=rows1[0][3]
+                race=race.lower()
+                age2=rows[0][0]
+                race2=rows[0][1]
+                race2=re.sub(r'[^\w\s]','',str(race2))
+                race2=race2.lower()
+                if inc==None:
+                    inc=-1
+                if age2==None:
+                    age2=18
+                if race2!=race2:
+                    race2=6
+                if race!=race:
+                    race=6
+                if job==None:
+                    job=18
+                if age!=age:
+                    age=18
                 
-                # # races={}
-                # # races[1]='Black'
-                # # races[2]='White'
-                # # races[3]='Latino'
-                # # races[4]='Asian'
-                # # races[5]='Native American'
-                # # races[6]='Other'
+                # races={}
+                # races[1]='Black'
+                # races[2]='White'
+                # races[3]='Latino'
+                # races[4]='Asian'
+                # races[5]='Native American'
+                # races[6]='Other'
 
-                # if race[0]=='b':
-                #     race=1
-                # elif race[0]=='w':
-                #     race=2
-                # elif race[0]=='l' or race[0]=='h':
-                #     race=3
-                # elif race[0]=='a' or race[0]=='e':
-                #     race=4
-                # elif race[0]=='n':
-                #     race=5
-                # else:
-                #     race=6
+                if race[0]=='b':
+                    race=1
+                elif race[0]=='w':
+                    race=2
+                elif race[0]=='l' or race[0]=='h':
+                    race=3
+                elif race[0]=='a' or race[0]=='e':
+                    race=4
+                elif race[0]=='n':
+                    race=5
+                else:
+                    race=6
 
-                # if race2[0]=='b':
-                #     race2=1
-                # elif race2[0]=='w':
-                #     race2=2
-                # elif race2[0]=='l' or race2[0]=='h':
-                #     race2=3
-                # elif race2[0]=='a' or race2[0]=='e':
-                #     race2=4
-                # elif race2[0]=='n':
-                #     race2=5
-                # else:
-                #     race2=6
+                if race2[0]=='b':
+                    race2=1
+                elif race2[0]=='w':
+                    race2=2
+                elif race2[0]=='l' or race2[0]=='h':
+                    race2=3
+                elif race2[0]=='a' or race2[0]=='e':
+                    race2=4
+                elif race2[0]=='n':
+                    race2=5
+                else:
+                    race2=6
 
 
-                # print(age)
-                # print(race)
-                # print(job)
-                # print(inc)
-                # print(age2)
-                # print(race2)
+                print(age)
+                print(race)
+                print(job)
+                print(inc)
+                print(age2)
+                print(race2)
 
-                # array=[age,race,job,inc,age2,race2]
-                # #install joblib on pip 
+                array=[age,race,job,inc,age2,race2]
+                #install joblib on pip 
 
-                # metric=predictions(array)
+                metric=predictions(array)
 
                 # insert into yeses_tbl
                 decision = request.form["decision"]
