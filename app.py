@@ -420,7 +420,7 @@ def showMessages():
     registeredUser = users_repository.get_user_by_id(userID)
     cursor = db.cursor()
     rows=[]
-
+    global recipient
     recipient = request.args.get('recipient')
 
     if request.method == 'GET':
