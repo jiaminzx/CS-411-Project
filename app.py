@@ -150,23 +150,8 @@ def userHome():
     rows=[]
     print(name)
     if request.method == 'GET':
-        pref, gender = getPrefandGen(userID, cursor)
-
-        if pref=='straight' and gender.lower()=='f':
-            genderPref='Men'
-            try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'M'")
-                rows=cursor.fetchall()
-            except mysql.connector.Error as error:
-                print("Failed to get record from database: {}".format(error))
-
-        elif pref=='straight' and gender.lower()=='m':
-            genderPref='Women'
-            try:
-                cursor.execute("SELECT * FROM users WHERE sex = 'F'")
-                rows=cursor.fetchall()
-            except mysql.connector.Error as error:
-                print("Failed to get record from database: {}".format(error))
+        cursor.execute('SELECT * FROM users WHERE userID = "%s"' % (userID))
+        rows = cursor.fetchall()
         return render_template('userHome.html', data=rows,name=name)
 
     return render_template('userHome.html',name=name)
@@ -304,25 +289,7 @@ def showMatches():
     if request.method == 'GET':
         pref, gender = getPrefandGen(userID, cursor)
 
-        # if pref=='straight' and gender.lower()=='f':
-        #     genderPref='Men'
         try:
-            # "select YT1.prospecting_id from yeses_tbl as YT1 where YT1.viewed__id = 6 and  YT1.prospecting_id IN (select YT2.viewed__id from yeses_tbl as YT2 where YT2.prospecting_id = 6);"
-            # "SELECT DISTINCT ptsoy FROM (SELECT prospecting_id AS ptsoy FROM yeses_tbl as yeses1 WHERE viewed__id = 6) AS matches_ids WHERE ptsoy IN (SELECT viewed__id AS pyso FROM yeses_tbl as yeses2 WHERE prospecting_id = 6)"
-            # ptsoy_query = "SELECT prospecting_id as ptsoy_id FROM yeses_tbl as yeses1 WHERE viewed__id = {}".format(userID)
-            # ptsoy_view = "CREATE VIEW ptsoy AS {}".format(ptsoy_query)
-            # cursor.execute(ptsoy_view)
-
-            # pyso_query = "SELECT viewed__id AS pyso_id FROM yeses_tbl as yeses2 WHERE prospecting_id = {}".format(userID)
-            # pyso_view = "CREATE VIEW pyso AS {}".format(pyso_query)
-            # cursor.execute(pyso_view)
-            # matches_query = "{} INTERSECT {}".format(ptsoy_query, pyso_query)
-            # ptsoy_pyso_intersect = "SELECT DISTINCT ptsoy_id FROM ptsoy AS matches_ids WHERE ptsoy_id IN pyso.pyso_id"
-
-            # matches_view_stmt = "CREATE VIEW matches AS {}".format(ptsoy_pyso_intersect)
-            # cursor.execute(matches_view_stmt)
-            # cursor.execute("SELECT * FROM users AS match_profiles WHERE userID IN (SELECT * FROM matches)")
-            # rows=cursor.fetchall()
 
             matches_query = "select YT1.prospecting_id from yeses_tbl as YT1 where YT1.viewed__id = {} and YT1.prospecting_id IN (select YT2.viewed__id from yeses_tbl as YT2 where YT2.prospecting_id = {})".format(userID, userID)
             # matches_view = "CREATE VIEW match_ids AS {}"
@@ -333,23 +300,7 @@ def showMatches():
         except mysql.connector.Error as error:
             print("Failed to get record from database: {}".format(error))
 
-    # elif pref=='straight' and gender.lower()=='m':
-    #     genderPref='Women'
-    #     try:
-    #         # ptsoy_query = "SELECT prospecting_id FROM yeses_tbl WHERE viewed__id = {}".format(userID)
-    #         # pyso_query = "SELECT viewed__id FROM yeses_tbl WHERE prospecting_id = {}".format(userID)
-    #         # matches_query = "{} INTERSECT {}".format(ptsoy_query, pyso_query)
-    #         # matches_view_stmt = "CREATE VIEW matches AS {}".format(matches_query)
-    #         # cursor.execute(matches_view_stmt)
-    #         # cursor.execute("SELECT * FROM matches")
-    #         # rows=cursor.fetchall()
-    #         matches_query = "select YT1.prospecting_id from yeses_tbl as YT1 where YT1.viewed__id = {} and YT1.prospecting_id IN (select YT2.viewed__id from yeses_tbl as YT2 where YT2.prospecting_id = {})".format(userID, userID)
-    #         # matches_view = "CREATE VIEW match_ids AS {}"
-    #         cursor.execute("SELECT * from users WHERE userID IN ".format(matches_query))
-    #         rows = cursor.fetchall()
-    #     except mysql.connector.Error as error:
-    #         print("Failed to get record from database: {}".format(error))
-        return render_template('userHome.html', data=rows,name=name)
+        return render_template('matches.html', data=rows,name=name)
 
     # return render_template('userHome.html',name=name)
 
