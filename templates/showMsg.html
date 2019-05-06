@@ -12,10 +12,13 @@
       </head>
    <body>
          <ul class="nav nav-pills pull-right">
-            <li role="presentation" ><a href="userHome"> Go Back </a> | </li>
-            <li role="presentation" ><a href="sendMessage"> Send Message </a> </li>
+            <li role="presentation" ><a href="userHome"> Go Back </a> </li>
           </ul>
 
+
+          <form action="{{ url_for('sendMessage') }}" method="post">
+          <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" name="recipient" type="submit" value= {{recipient}}>Send Messages</button>
+          </form>
           <form action="{{ url_for('showMessages') }}" method="get">
           <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Show Messages</button>
           </form>
