@@ -13,7 +13,7 @@
    <body>
 
            <ul class="nav nav-pills pull-right">
-              <li role="presentation" ><a href="userHome"> View Profile </a> | </li>
+              <li role="presentation" ><a href="userHome"> Go Back </a> </li>
             </ul>
 
           {% if current_user.is_authenticated %}
@@ -33,7 +33,7 @@
                     <td>Sex: {{item[15]}}</td>
 
                     <form action="/message" method="post">
-                      <button id="btnSignIn" class="btn btn-lg btn-primary btn-success" name="recipient" type="submit" value= {{item[18]}}> Message </button>
+                      <button id="btnSignIn" class="btn btn-lg btn-primary btn-success" name="recipient" type="submit" value= {{item[1]}}> Message </button>
                     </form>
 
                </tr>

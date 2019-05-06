@@ -393,15 +393,62 @@ def show_user_queue():
 @app.route("/message", methods = ["POST", "GET"])
 @login_required
 def messaging():
+
+    userID = request.cookies.get('Login')
+    print("user in session:" +str(userID))
+    registeredUser = users_repository.get_user_by_id(userID)
+    cursor = db.cursor()
+
     if request.method == 'GET':
         print('Get')
 
     if request.method == 'POST':
-        print('Post')
         recipient = request.form["recipient"]
         print('Want to message ', recipient)
 
-    return redirect(url_for('showMatches'))
+    return redirect(url_for('showMessages', sender=userID, recipient=recipient))
+
+@app.route("/showMessages",methods=['GET', 'POST'])
+def showMessages():
+
+    userID = request.cookies.get('Login')
+    print("user in session:" +str(userID))
+    registeredUser = users_repository.get_user_by_id(userID)
+    cursor = db.cursor()
+    rows=[]
+
+    recipient = request.args.get('recipient')
+
+    if request.method == 'GET':
+        try:
+            cursor.execute("SELECT * FROM messages_tbl WHERE sender_id = %s OR sender_id = %s ORDER BY time", (userID,recipient))
+            rows=cursor.fetchall()
+        except Exception as e:
+          return(str(e))
+    elif request.method == 'POST':
+        try:
+            msg = request.form['text']
+            cursor.execute("INSERT LOW_PRIORITY INTO  messages_tbl (sender_id, recipient_id, text) VALUES (%s,%s, %s)",(userID,recipient,msg))
+            db.commit()
+            return render_template('messages.html')
+        except Exception as e:
+          return(str(e))
+
+    return render_template('showMsg.html', data=rows)
+
+@app.route('/showMessage', methods=['POST'])
+def addMessage():
+    if request.method == 'POST':
+        try:
+            global sender, recipient
+            sender = request.form['sender_id']
+            recipient = request.form['recipient_id']
+            msg = request.form['text']
+            cursor.execute("INSERT LOW_PRIORITY INTO  messages_tbl (sender_id, recipient_id, text) VALUES (%s,%s, %s)",(sender,recipient,msg))
+            db.commit()
+        except Exception as e:
+          return(str(e))
+    return render_template('messages.html')
 
 # handle login failed
 @app.errorhandler(401)
