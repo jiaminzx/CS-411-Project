@@ -1,5 +1,6 @@
 import re
 import mysql.connector as mariadb
+import joblib
 from flask import Flask, render_template, json, jsonify, request
 from flask import flash, redirect, session, abort,url_for, make_response
 from flask_login import LoginManager , login_required , UserMixin , login_user
@@ -53,6 +54,17 @@ def getName(registeredUser, cursor):
         name=names[1:]
         return name
 
+def predictions(array):
+    print("loading model")
+    model=joblib.load('model.sav')
+    print("model loaded")
+    proba=model.predict_proba([array])
+    print(proba[0][0])
+
+    metric=proba[0][0]
+    metric=1-(metric/.843)
+    return metric
+
 def getPrefandGen(userID, cursor):
         #use of prepared statment
         spq = """SELECT orientation FROM users WHERE userID= %s"""
@@ -72,8 +84,10 @@ def getPrefandGen(userID, cursor):
 #Use this line for cPanel
 # db = mariadb.connect(user='root', password='password', database='m2z2')
 #Use this line for VM
-db = mariadb.connect(user='root', password='password',database='m2z2')
-# db = mariadb.connect(user='user', password='password',database='m2z2')
+#db = mariadb.connect(user='root', password='password',database='m2z2')
+
+#use this for jiamin's local dev
+db = mariadb.connect(user='username', password='password',database='m2z2')
 
 cursor = db.cursor(buffered= True)
 
@@ -315,7 +329,7 @@ def show_user_queue():
     userID = request.cookies.get('Login')
     print("user in session:" +str(userID))
 
-    # CREATE VIEW `view_name` AS SELECT statement
+    metric=0
 
     registeredUser = users_repository.get_user_by_id(userID)
     cursor = db.cursor()
@@ -333,6 +347,87 @@ def show_user_queue():
             try:
                 cursor.execute("SELECT * FROM users WHERE sex = 'M'")
                 rows=cursor.fetchall()
+
+                
+                matchn= rows[userNum][0]
+                print(str(matchn)+"in get straight f")
+                cursor.execute("SELECT age, ethnicity, job, income FROM users WHERE userID = %s", [str(userID)])
+                rows1=cursor.fetchall()
+
+                cursor.execute("SELECT age, ethnicity FROM users WHERE userID = %s", [str(matchn)])
+                rows=cursor.fetchall()
+
+                age=rows1[0][0]
+                race=rows1[0][1]
+                race=re.sub(r'[^\w\s]','',str(race))
+                job=rows1[0][2]
+                inc=rows1[0][3]
+                race=race.lower()
+                age2=rows[0][0]
+                race2=rows[0][1]
+                race2=re.sub(r'[^\w\s]','',str(race2))
+                race2=race2.lower()
+                if inc==None:
+                    inc=-1
+                if age2==None:
+                    age2=18
+                if race2!=race2:
+                    race2=6
+                if race!=race:
+                    race=6
+                if job==None:
+                    job=18
+                if age!=age:
+                    age=18
+                
+                # races={}
+                # races[1]='Black'
+                # races[2]='White'
+                # races[3]='Latino'
+                # races[4]='Asian'
+                # races[5]='Native American'
+                # races[6]='Other'
+
+                if race[0]=='b':
+                    race=1
+                elif race[0]=='w':
+                    race=2
+                elif race[0]=='l' or race[0]=='h':
+                    race=3
+                elif race[0]=='a' or race[0]=='e':
+                    race=4
+                elif race[0]=='n':
+                    race=5
+                else:
+                    race=6
+
+                if race2[0]=='b':
+                    race2=1
+                elif race2[0]=='w':
+                    race2=2
+                elif race2[0]=='l' or race2[0]=='h':
+                    race2=3
+                elif race2[0]=='a' or race2[0]=='e':
+                    race2=4
+                elif race2[0]=='n':
+                    race2=5
+                else:
+                    race2=6
+
+
+                print(age)
+                print(race)
+                print(job)
+                print(inc)
+                print(age2)
+                print(race2)
+
+                array=[age,race,job,inc,age2,race2]
+                #install joblib on pip 
+
+                metric=predictions(array)
+
+
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
 
@@ -341,10 +436,13 @@ def show_user_queue():
             try:
                 cursor.execute("SELECT * FROM users WHERE sex = 'F'")
                 rows=cursor.fetchall()
+
+                #insert
+
             except mysql.connector.Error as error:
                 print("Failed to get record from database: {}".format(error))
 
-        return render_template('possibleMatch.html', data=rows,name=name,i=userNum)
+        return render_template('possibleMatch.html', data=rows,name=name,i=userNum,metric=metric)
 
     if request.method == 'POST':
         rows=[]
@@ -357,6 +455,8 @@ def show_user_queue():
             try:
                 cursor.execute("SELECT * FROM users WHERE sex = 'M'")
                 rows=cursor.fetchall()
+
+                #insert
 
                 # insert into yeses_tbl
                 decision = request.form["decision"]
@@ -375,6 +475,8 @@ def show_user_queue():
             try:
                 cursor.execute("SELECT * FROM users WHERE sex = 'F'")
                 rows=cursor.fetchall()
+
+                #insert
 
                 # insert into yeses_tbl
                 decision = request.form["decision"]
@@ -415,5 +517,5 @@ def load_user(userid):
 
 # #comment out when hosting on cpanel
 if __name__ == "__main__":
-    app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
-    # app.run()
+    #app.run(host='sp19-cs411-36.cs.illinois.edu', port=8081)
+    app.run()
