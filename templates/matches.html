@@ -32,6 +32,10 @@
                     <td>Height: {{item[7]}}</td>
                     <td>Sex: {{item[15]}}</td>
 
+                    <form action="/message" method="post">
+                      <button id="btnSignIn" class="btn btn-lg btn-primary btn-success" name="recipient" type="submit" value= {{item[18]}}> Message </button>
+                    </form>
+
                </tr>
                {% endfor %}
                </tbody>
